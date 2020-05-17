@@ -4,8 +4,13 @@
 	border-color: black;
 	border-width: 1px;
 	display: inline-block;
+	position: relative;
 }
 
 #game .tile {
 	display: inline-block;
+}
+
+#stick {
+	position: absolute;
 }

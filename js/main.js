@@ -1,4 +1,4 @@
-function initialise(width, height) {
+function initialise(width, height, stick) {
 	// Creating the viewport elements
 
 	for (var y = 0; y < height; y++) {
@@ -8,7 +8,39 @@ function initialise(width, height) {
 			row.append(blockContainer);
 		}
 		$("#game-field").append(row);
+
+		$("#game-overlay").append($('<dif id="stick" style="top:0; left:0;"></div>'));
 	}
+
+
+	// Binding the keys
+	document.onkeydown = function(e) {
+		console.log(e.which)
+	    switch(e.which) {
+	        case 37: // left
+	        case 65: // left
+	        moveStick(-1, 0, stick);
+	        break;
+
+	        case 38: // up
+	        case 87: // up
+	        moveStick(0, -1, stick);
+	        break;
+
+	        case 39: // right
+	        case 68: // right
+	        moveStick(1, 0, stick);
+	        break;
+
+	        case 40: // down
+	        case 83: // down
+	        moveStick(0, 1, stick);
+	        break;
+
+	        default: return; // exit this handler for other keys
+	    }
+	    e.preventDefault(); // prevent the default action (scroll / move caret)
+	};
 
 }
 
@@ -70,8 +102,31 @@ function drawMap() {
 	};
 }
 
+function drawStick(stick) {
+	// Drawing the adventurer over the map in its own container
+
+	$("#stick").html(sprites["stick-basic"].split(" ").join("&nbsp"));
+	var pos = $('#' + stick.x + "-" + stick.y).position();
+	$("#stick").css({
+		left: pos.left,
+		top: pos.top
+	})
+}
+
+function moveStick(x, y, stick) {
+	stick.x += x;
+	stick.y += y;
+	drawStick(stick)
+}
+
 // Run the game
 game = generateMap(10, 10);
-initialise(10, 10);
+var stick = {
+	x: 3,
+	y: 3
+}
+initialise(10, 10, stick);
 console.log(game)
 drawMap();
+drawStick(stick);
+
