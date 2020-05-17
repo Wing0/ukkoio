@@ -1,0 +1,7 @@
+#game {
+	font-family: "Courier New", Courier, monospace;
+}
+
+#game .tile {
+	display: inline-block;
+}
