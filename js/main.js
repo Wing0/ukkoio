@@ -216,6 +216,16 @@ function updateUI() {
 		drawMap()
 		drawStick(gameData.stick)
 	}
+	if (gameData.stick.y < game[0].length && gameData.stick.y - gameData.view[3] == gameData.view[1] - 1) {
+		gameData.view[3] = Math.min(game[0].length - gameData.view[1], gameData.view[3] + (gameData.view[1] - 2))
+		drawMap()
+		drawStick(gameData.stick)
+	}
+	if (gameData.stick.y > 0 && gameData.stick.y - gameData.view[3] == 0) {
+		gameData.view[3] = Math.max(0, gameData.view[3] - (gameData.view[1] - 2))
+		drawMap()
+		drawStick(gameData.stick)
+	}
 
 
 	// Transition hint arrows
@@ -233,7 +243,7 @@ function updateUI() {
 			$("#move-left").fadeOut(0);
 		}
 	}
-	if (gameData.stick.y < game[0].length - 2 && gameData.stick.y - gameData.view[3] == gameData.view[1] - 2 && game[gameData.stick.x][gameData.stick.y + 1] == "empty") {
+	if (gameData.stick.y < game[0].length - 2 && gameData.stick.y - gameData.view[3] == gameData.view[1] - 2) {
 		$("#move-down").fadeIn(200);
 	} else {
 		if ($("#move-down").is(":visible")) {
