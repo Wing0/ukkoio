@@ -1,16 +1,24 @@
 #game {
 	font-family: "Courier New", Courier, monospace;
+	display: inline-block;
+	position: relative;
+}
+
+#game-field {
 	border-style: dotted;
 	border-color: black;
 	border-width: 1px;
-	display: inline-block;
-	position: relative;
 }
 
 #game .tile {
 	display: inline-block;
 }
 
-#stick {
+#stick-container {
 	position: absolute;
+}
+
+#message {
+	text-align: center;
+	width: 10em;
 }

@@ -9,7 +9,9 @@ function initialise(width, height, stick) {
 		}
 		$("#game-field").append(row);
 
-		$("#game-overlay").append($('<dif id="stick" style="top:0; left:0;"></div>'));
+		$("#game-overlay").append($('<dif id="stick-container" style="top:0; left:0;"></div>'));
+		$("#stick-container").append($('<dif id="stick"></div>'));
+		$("#stick-container").append($('<dif id="message" style="display: none; position: absolute; bottom:110%; left:-2.5em;"></div>'));
 	}
 
 
@@ -104,7 +106,7 @@ function drawStick(stick) {
 
 	$("#stick").html(sprites["stick-basic"].split(" ").join("&nbsp"));
 	var pos = $('#' + stick.x + "-" + stick.y).position();
-	$("#stick").css({
+	$("#stick-container").css({
 		left: pos.left,
 		top: pos.top
 	})
@@ -145,26 +147,49 @@ function dig(x, y, stick) {
 	switch (tileType) {
 		case "basic":
 		case "gold-one":
-		game[stick.x + x][stick.y + y] = "empty";
-		stick.score =+ gameData.tiles[tileType].s
-		stick.money =+ gameData.tiles[tileType].m
+			game[stick.x + x][stick.y + y] = "empty";
+			if (stick.money == 0 && gameData.tiles[tileType].m > 0) {
+				say("Ooh, moneys!")
+			}
+			stick.score += gameData.tiles[tileType].s;
+			stick.money += gameData.tiles[tileType].m;
 		break;
 	}
 	drawTile(stick.x + x, stick.y + y)
+	updateUI()
 	environmentCheckStick(stick);
 }
 
 function selectMove(x, y, stick) {
 	// 
-	if (stick.x == game.length - 1 && x > 0) {return;}
-	if (stick.y == game[stick.x].length - 1 && y > 0) {return;}
-	if (stick.x == 0 && x < 0) {return;}
-	if (stick.y == 0 && y < 0) {return;}
+	if (stick.x == game.length - 1 && x > 0) {
+		say("O-o-oou, cannot go further", "warning")
+		return;
+	}
+	if (stick.y == game[stick.x].length - 1 && y > 0) {
+		say("O-o-oou, cannot go further", "warning")
+		return;
+	}
+	if (stick.x == 0 && x < 0) {
+		say("O-o-oou, cannot go further", "warning")
+		return;
+	}
+	if (stick.y == 0 && y < 0) {
+		say("O-o-oou, cannot go further", "warning")
+		return;
+	}
 	if (game[stick.x + x][stick.y + y] == "empty") {
 		validMoveStick(x, y, stick);
 	} else {
 		dig(x, y, stick);
 	}
+}
+
+function updateUI(argument) {
+	// This function updates the changes in the game data in the UI
+
+	$("#score-display").html(gameData.stick.score);
+	$("#money-display").html(gameData.stick.money);
 }
 
 // Run the game
@@ -196,6 +221,32 @@ var gameData = {
 	}
 }
 
+function say(message, level) {
+	// The stick man will say the message as a feedback
+	$("#message").html(message);
+	var severity = 1
+	switch (level) {
+
+		case "info":
+			$("#message").css({"background-color": "white"});
+			break;
+
+		case "warning":
+			$("#message").css({"background-color": "yellow"});
+			severity = 1.5
+			break;
+		default:
+			$("#message").css({"background-color": "white"});
+			break;
+	}
+	$("#message").fadeIn(200);
+	setTimeout(function() {
+		$("#message").fadeOut(1000);
+	}, message.length * 100 * severity)
+	
+
+}
+
 game = generateMap(10, 10);
 
 initialise(10, 10, gameData.stick);
@@ -203,5 +254,6 @@ console.log(game)
 drawMap();
 drawStick(gameData.stick);
 environmentCheckStick(gameData.stick)
-
+updateUI()
+say("Welcome!")
 
