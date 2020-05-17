@@ -1,5 +1,9 @@
 #game {
 	font-family: "Courier New", Courier, monospace;
+	border-style: dotted;
+	border-color: black;
+	border-width: 1px;
+	display: inline-block;
 }
 
 #game .tile {
