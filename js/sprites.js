@@ -7,5 +7,9 @@ var sprites = {
 	"hard-one": "|: : :|<br>: : : :<br>|: : :|",
 	"hard-one-gold-three": "|0 : 0|<br>|: 0 :|<br>|: : :|",
 	"hard-ten": "{|||||}<br>{|||||}<br>{|||||}",
-	"stick-basic": "   O   <br>  /|\\  <br>  / \\  "
+	"stick-basic": "   O   <br>  /|\\  <br>  / \\  ",
+	"stick-dig-right": "__O    <br>\\-|\\--><br> / \\   ",
+	"stick-dig-left": "    O__<br><--/|-/<br>   / \\ ",
+	"stick-dig-down": "   O/\\ <br>  /\\_| <br> /|  V ",
+	"stick-dig-up": "   O A  <br>  |\\=| <br> / \\ | ",
 };

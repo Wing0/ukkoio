@@ -127,10 +127,12 @@ function drawTile(v_x, v_y) {
 	$('#' + v_x + "-" + v_y).html(sprites[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].split(" ").join("&nbsp"))
 }
 
-function drawStick(stick) {
+function drawStick(stick, pose) {
 	// Drawing the adventurer over the map in its own container
-
-	$("#stick").html(sprites["stick-basic"].split(" ").join("&nbsp"));
+	if (!pose) {
+		pose = "stick-basic";
+	}
+	$("#stick").html(sprites[pose].split(" ").join("&nbsp"));
 	var x = stick.x - gameData.view[2];
 	var y = stick.y - gameData.view[3];
 	var pos = $('#' + x + "-" + y).position();
@@ -176,6 +178,18 @@ function dig(x, y, stick) {
 	var tileType = game[stick.x + x][stick.y + y];
 	switch (tileType) {
 		default:
+			if (x > 0) {
+				drawStick(stick, "stick-dig-right");
+			}
+			if (y > 0) {
+				drawStick(stick, "stick-dig-down");
+			}
+			if (x < 0) {
+				drawStick(stick, "stick-dig-left");
+			}
+			if (y < 0) {
+				drawStick(stick, "stick-dig-up");
+			}
 			dto = setTimeout(function(){
 				game[stick.x + x][stick.y + y] = "empty";
 				if (stick.money == 0 && gameData.tiles[tileType].m > 0) {
@@ -186,6 +200,7 @@ function dig(x, y, stick) {
 				var v_x = stick.x - gameData.view[2] + x;
 				var v_y = stick.y - gameData.view[3] + y;
 				drawTile(v_x, v_y)
+				drawStick(stick)
 				updateUI()
 				environmentCheckStick(stick);
 			}, gameData.tiles[tileType].h / stick.shovel * 1000);
