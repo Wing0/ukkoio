@@ -70,17 +70,20 @@ function generateMap(width, height) {
 			} else {
 				var rnd = Math.random();
 				var inc = 0;
-				
+				var found = false;
 				for (var t in gameData.tiles){
-
 					if (gameData.tiles[t].distribute && y > gameData.tiles[t].b && y < gameData.tiles[t].e) {
 						console.log(inc, )
-						if (inc + rnd < (Math.sin((y - gameData.tiles[t].b)/(gameData.tiles[t].e - gameData.tiles[t].b)*Math.PI*2)+0.5) * gameData.tiles[t].p/100) {
-							game[x][y] = 'gold-one';
-							inc += gameData.tiles[t].p
-							continue
+						// If rnd is smaller than the expected propability, create the special tile
+						if (rnd < inc + (Math.sin((y - gameData.tiles[t].b)/(gameData.tiles[t].e - gameData.tiles[t].b)*Math.PI*2 - Math.PI/2)+1) * gameData.tiles[t].p/100) {
+							game[x][y] = t;
+							found = true;
+							break;
 						}
+						inc += (Math.sin((y - gameData.tiles[t].b)/(gameData.tiles[t].e - gameData.tiles[t].b)*Math.PI*2 - Math.PI/2)+1) * gameData.tiles[t].p/100
 					}
+				}
+				if (!found) {
 					game[x][y] = 'basic';
 				}
 			}
@@ -154,8 +157,7 @@ function dig(x, y, stick) {
 	// The stick man will dig the tile in that direction
 	var tileType = game[stick.x + x][stick.y + y];
 	switch (tileType) {
-		case "basic":
-		case "gold-one":
+		default:
 			dto = setTimeout(function(){
 				game[stick.x + x][stick.y + y] = "empty";
 				if (stick.money == 0 && gameData.tiles[tileType].m > 0) {
@@ -303,18 +305,54 @@ var gameData = {
 		"gold-one": {
 			distribute: true,
 			b: 5,
-			p: 30,
-			e: 35,
+			p: 15,
+			e: 40,
 			s: 5,
 			m: 1,
 			h: 1
-		}
+		},
+		"hard-one": {
+			distribute: true,
+			b: 15,
+			p: 25,
+			e: 60,
+			s: 5,
+			m: 0,
+			h: 2
+		},
+		"hard-one-gold-three": {
+			distribute: true,
+			b: 20,
+			p: 5,
+			e: 70,
+			s: 20,
+			m: 3,
+			h: 2
+		},
+		"gold-three": {
+			distribute: true,
+			b: 30,
+			p: 2,
+			e: 80,
+			s: 15,
+			m: 3,
+			h: 1
+		},
+		"gold-five": {
+			distribute: true,
+			b: 50,
+			p: 3,
+			e: 100,
+			s: 25,
+			m: 5,
+			h: 1
+		},
 	},
 	stick: {
 		x: 5,
 		y: 3,
 		jump: false,
-		shovel: 3,
+		shovel: 5,
 		score: 0,
 		money: 0
 	},
@@ -329,5 +367,5 @@ drawMap(gameData.view);
 drawStick(gameData.stick);
 environmentCheckStick(gameData.stick)
 updateUI()
-say("Welcome!")
+say("Where am I? What is this place?")
 
