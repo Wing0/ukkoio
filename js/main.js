@@ -19,22 +19,22 @@ function initialise(width, height, stick) {
 	    switch(e.which) {
 	        case 37: // left
 	        case 65: // left
-	        validMoveStick(-1, 0, stick);
+	        selectMove(-1, 0, stick);
 	        break;
 
 	        case 38: // up
 	        case 87: // up
-	        validMoveStick(0, -1, stick);
+	        selectMove(0, -1, stick);
 	        break;
 
 	        case 39: // right
 	        case 68: // right
-	        validMoveStick(1, 0, stick);
+	        selectMove(1, 0, stick);
 	        break;
 
 	        case 40: // down
 	        case 83: // down
-	        validMoveStick(0, 1, stick);
+	        selectMove(0, 1, stick);
 	        break;
 
 	        default: return; // exit this handler for other keys
@@ -55,15 +55,6 @@ function generateMap(width, height) {
 		game.push(new Array(height).fill("empty"))
 	}
 
-	// Data for the distribution of each tile
-	var tiles = {
-		"gold-one": {
-			b: 5,
-			p: 30,
-			e: 35
-		}
-	};
-
 	// Generating the map
 	for (var x = 0; x < width; x++) {
 		for (var y = 0; y < height; y++) {
@@ -73,13 +64,13 @@ function generateMap(width, height) {
 				var rnd = Math.random();
 				var inc = 0;
 				
-				for (var t in tiles){
+				for (var t in gameData.tiles){
 
-					if (y > tiles[t].b && y < tiles[t].e) {
+					if (gameData.tiles[t].distribute && y > gameData.tiles[t].b && y < gameData.tiles[t].e) {
 						console.log(inc, )
-						if (inc + rnd < (Math.sin((y - tiles[t].b)/(tiles[t].e - tiles[t].b)*Math.PI*2)+0.5) * tiles[t].p/100) {
+						if (inc + rnd < (Math.sin((y - gameData.tiles[t].b)/(gameData.tiles[t].e - gameData.tiles[t].b)*Math.PI*2)+0.5) * gameData.tiles[t].p/100) {
 							game[x][y] = 'gold-one';
-							inc += tiles[t].p
+							inc += gameData.tiles[t].p
 							continue
 						}
 					}
@@ -97,9 +88,15 @@ function drawMap() {
 
 	for (var x = 0; x < game.length; x++) {
 		for (var y = 0; y < game[x].length; y++) {
-			$('#' + x + "-" + y).html(sprites[game[x][y]].split(" ").join("&nbsp"))
+			drawTile(x, y);
 		}
 	};
+}
+
+function drawTile(x, y) {
+	// Draw the tile on the map to update, or re-draw
+	console.log(x, y, game[x][y])
+	$('#' + x + "-" + y).html(sprites[game[x][y]].split(" ").join("&nbsp"))
 }
 
 function drawStick(stick) {
@@ -121,7 +118,7 @@ function moveStick(x, y, stick) {
 }
 
 function environmentCheckStick(stick) {
-	if (game[stick.x][stick.y + 1] == "empty") {
+	if (stick.x < game.length - 1 && stick.y < game[stick.x].length - 1 && game[stick.x][stick.y + 1] == "empty") {
 		moveStick(0, 1, stick)
 		environmentCheckStick(stick)
 	}
@@ -129,31 +126,82 @@ function environmentCheckStick(stick) {
 
 function validMoveStick(x, y, stick) {
 	// Validate the movement before moving
-
-	if (game[stick.x + x][stick.y + y] == "empty") {
-		if (y < 0){
-			if (!stick.jump){
-				return;
+	if (stick.x <= game.length - 1 && stick.y <= game[stick.x].length - 1) {
+		if (game[stick.x + x][stick.y + y] == "empty") {
+			if (y < 0){
+				if (!stick.jump){
+					return;
+				}
 			}
+			moveStick(x, y, stick)
+			environmentCheckStick(stick)
 		}
-		moveStick(x, y, stick)
-		environmentCheckStick(stick)
 	}
+}
 
+function dig(x, y, stick) {
+	// The stick man will dig the tile in that direction
+	var tileType = game[stick.x + x][stick.y + y];
+	switch (tileType) {
+		case "basic":
+		case "gold-one":
+		game[stick.x + x][stick.y + y] = "empty";
+		stick.score =+ gameData.tiles[tileType].s
+		stick.money =+ gameData.tiles[tileType].m
+		break;
+	}
+	drawTile(stick.x + x, stick.y + y)
+	environmentCheckStick(stick);
+}
 
+function selectMove(x, y, stick) {
+	// 
+	if (stick.x == game.length - 1 && x > 0) {return;}
+	if (stick.y == game[stick.x].length - 1 && y > 0) {return;}
+	if (stick.x == 0 && x < 0) {return;}
+	if (stick.y == 0 && y < 0) {return;}
+	if (game[stick.x + x][stick.y + y] == "empty") {
+		validMoveStick(x, y, stick);
+	} else {
+		dig(x, y, stick);
+	}
 }
 
 // Run the game
-game = generateMap(10, 10);
-var stick = {
-	x: 1,
-	y: 1,
-	jump: false
+
+var gameData = {
+	// Data for the distribution of each tile
+	tiles: {
+		"basic": {
+			distribute: false,
+			s: 1,
+			m: 0
+		},
+		"gold-one": {
+			distribute: true,
+			b: 5,
+			p: 30,
+			e: 35,
+			s: 5,
+			m: 1
+		}
+	},
+	stick: {
+		x: 1,
+		y: 1,
+		jump: false,
+		shovel: 1,
+		score: 0,
+		money: 0
+	}
 }
-initialise(10, 10, stick);
+
+game = generateMap(10, 10);
+
+initialise(10, 10, gameData.stick);
 console.log(game)
 drawMap();
-drawStick(stick);
-environmentCheckStick(stick)
+drawStick(gameData.stick);
+environmentCheckStick(gameData.stick)
 
 
