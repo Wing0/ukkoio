@@ -1,4 +1,6 @@
 function initialise(width, height) {
+	// Creating the viewport elements
+
 	for (var y = 0; y < height; y++) {
 		var row = $('<div class="row" id="' + y + '"></div>');
 		for (var x = 0; x < width; x++) {
@@ -11,13 +13,17 @@ function initialise(width, height) {
 }
 
 function generateMap(width, height) {
-	console.log("Generating the map...")
-	var game = [];
+	// Generating the data for the entire map
 
+	console.log("Generating the map...")
+	
+	// Fill the map with empty tiles
+	var game = [];
 	for (var x = 0; x < width; x++) {
 		game.push(new Array(height).fill("empty"))
 	}
 
+	// Data for the distribution of each tile
 	var tiles = {
 		"gold-one": {
 			b: 5,
@@ -26,7 +32,7 @@ function generateMap(width, height) {
 		}
 	};
 
-
+	// Generating the map
 	for (var x = 0; x < width; x++) {
 		for (var y = 0; y < height; y++) {
 			if (y < 4) {
@@ -50,10 +56,12 @@ function generateMap(width, height) {
 			}
 		}
 	}
+
 	return game;
 }
 
 function drawMap() {
+	// Fill the viewport elements with the right content based on the map
 
 	for (var x = 0; x < game.length; x++) {
 		for (var y = 0; y < game[x].length; y++) {
@@ -62,7 +70,7 @@ function drawMap() {
 	};
 }
 
-
+// Run the game
 game = generateMap(10, 10);
 initialise(10, 10);
 console.log(game)
