@@ -14,6 +14,10 @@
 	display: inline-block;
 }
 
+#game .arrow {
+	font-size: 2em;
+}
+
 #stick-container {
 	position: absolute;
 }
