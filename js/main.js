@@ -156,19 +156,21 @@ function dig(x, y, stick) {
 	switch (tileType) {
 		case "basic":
 		case "gold-one":
-			game[stick.x + x][stick.y + y] = "empty";
-			if (stick.money == 0 && gameData.tiles[tileType].m > 0) {
-				say("Ooh, moneys!")
-			}
-			stick.score += gameData.tiles[tileType].s;
-			stick.money += gameData.tiles[tileType].m;
+			dto = setTimeout(function(){
+				game[stick.x + x][stick.y + y] = "empty";
+				if (stick.money == 0 && gameData.tiles[tileType].m > 0) {
+					say("Ooh, moneys!")
+				}
+				stick.score += gameData.tiles[tileType].s;
+				stick.money += gameData.tiles[tileType].m;
+				var v_x = stick.x - gameData.view[2] + x;
+				var v_y = stick.y - gameData.view[3] + y;
+				drawTile(v_x, v_y)
+				updateUI()
+				environmentCheckStick(stick);
+			}, gameData.tiles[tileType].h / stick.shovel * 1000);
 		break;
 	}
-	var v_x = stick.x - gameData.view[2] + x;
-	var v_y = stick.y - gameData.view[3] + y;
-	drawTile(v_x, v_y)
-	updateUI()
-	environmentCheckStick(stick);
 }
 
 function selectMove(x, y, stick) {
@@ -189,6 +191,7 @@ function selectMove(x, y, stick) {
 		say("O-o-oou, cannot go further", "warning")
 		return;
 	}
+	clearTimeout(dto);
 	if (game[stick.x + x][stick.y + y] == "empty") {
 		validMoveStick(x, y, stick);
 	} else {
@@ -294,7 +297,8 @@ var gameData = {
 		"basic": {
 			distribute: false,
 			s: 1,
-			m: 0
+			m: 0,
+			h: 1
 		},
 		"gold-one": {
 			distribute: true,
@@ -302,14 +306,15 @@ var gameData = {
 			p: 30,
 			e: 35,
 			s: 5,
-			m: 1
+			m: 1,
+			h: 1
 		}
 	},
 	stick: {
 		x: 5,
 		y: 3,
 		jump: false,
-		shovel: 1,
+		shovel: 3,
 		score: 0,
 		money: 0
 	},
@@ -317,8 +322,8 @@ var gameData = {
 }
 
 game = generateMap(20, 100);
-
 initialise(gameData.view[0], gameData.view[1], gameData.stick);
+var dto = false;
 console.log(game)
 drawMap(gameData.view);
 drawStick(gameData.stick);
