@@ -6,6 +6,6 @@ var sprites = {
 	"gold-five": "|0```0|<br>|  0  |<br>|0___0|",
 	"hard-one": "|: : :|<br>: : : :<br>|: : :|",
 	"hard-one-gold-three": "|0 : 0|<br>|: 0 :|<br>|: : :|",
+	"hard-ten": "{|||||}<br>{|||||}<br>{|||||}",
 	"stick-basic": "   O   <br>  /|\\  <br>  / \\  "
-	
 };

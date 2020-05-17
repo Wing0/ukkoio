@@ -10,6 +10,10 @@
 	border-width: 1px;
 }
 
+#game-store {
+	display: none;
+}
+
 #game .tile {
 	display: inline-block;
 }
@@ -17,6 +21,18 @@
 #game .arrow {
 	font-size: 2em;
 }
+
+#game .selector.selected {
+	color: blue;
+	font-weight: bold;
+}
+
+
+#game .selector.chosen {
+	color: green !important;
+	font-weight: bold;
+}
+
 
 #stick-container {
 	position: absolute;

@@ -31,7 +31,11 @@ function initialise(width, height, stick) {
 
 	        case 38: // up
 	        case 87: // up
-	        selectMove(0, -1, stick);
+	        if (! gameData.shop[0]){
+	        	selectMove(0, -1, stick);
+	        } else {
+	        	selectItem(-1);
+	        }
 	        break;
 
 	        case 39: // right
@@ -41,7 +45,21 @@ function initialise(width, height, stick) {
 
 	        case 40: // down
 	        case 83: // down
-	        selectMove(0, 1, stick);
+	        if (! gameData.shop[0]){
+	        	selectMove(0, 1, stick);
+	        } else {
+	        	selectItem(1);
+	        }
+	        break;
+
+	        case 13: // Enter
+	        if (gameData.shop[0]){
+	        	buyItem();
+	        }
+	        break;
+
+	        case 9: // TAB
+	        toggleShop();
 	        break;
 
 	        default: return; // exit this handler for other keys
@@ -265,6 +283,59 @@ function updateUI() {
 
 }
 
+function toggleShop() {
+	// body...
+	if ($("#game-field").is(":visible")) {
+		$("#stick-container").fadeOut(200);
+		$("#game-field").fadeOut(200, function(){
+			$("#game-store").fadeIn();
+			updateShop();
+			gameData.shop[0] = true;
+		});
+		
+	} else {	
+		$("#game-store").fadeOut(200, function(){
+			$("#game-field").fadeIn();	
+			$("#stick-container").fadeIn(200);
+		});
+		gameData.shop[0] = false;
+	}
+	
+}
+
+function updateShop() {
+	// body...
+	$("#store-shovel>.price").html(Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]));
+	updateUI();
+}
+
+function selectItem(direction) {
+	// Move the item slector
+	console.log("selectiong...")
+	gameData.shop[1] += direction;
+	gameData.shop[1] = Math.max(0, gameData.shop[1])
+	gameData.shop[1] = Math.min($(".selector").length - 1, gameData.shop[1])
+	$(".selected").removeClass("selected");
+	$(".selector:eq("+gameData.shop[1]+")").addClass("selected");
+}
+
+
+function buyItem() {
+	if (gameData.shop[1] == 0) {
+		var cost = Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]);
+		if (gameData.stick.money >= cost) {
+			gameData.upgrades.shovel[0] += 1;
+			gameData.stick.shovel *= 1.3;
+			gameData.stick.money -= cost;
+			$(".selector:eq("+gameData.shop[1]+")").addClass("chosen");
+			updateShop();
+			setTimeout(function(){
+				$(".chosen").removeClass("chosen");
+			}, 1500)
+		}
+	}
+}
+
 function say(message, level) {
 	// The stick man will say the message as a feedback
 	$("#message").html(message);
@@ -287,8 +358,6 @@ function say(message, level) {
 	setTimeout(function() {
 		$("#message").fadeOut(1000);
 	}, message.length * 100 * severity)
-	
-
 }
 
 // Run the game
@@ -346,17 +415,30 @@ var gameData = {
 			s: 25,
 			m: 5,
 			h: 1
+		}, 
+		"hard-ten": {
+			distribute: true,
+			b: 50,
+			p: 30,
+			e: 150,
+			s: 25,
+			m: 0,
+			h: 10
 		},
 	},
 	stick: {
 		x: 5,
 		y: 3,
 		jump: false,
-		shovel: 5,
+		shovel: 1,
 		score: 0,
 		money: 0
 	},
-	view: [10, 10, 1, 1]
+	view: [10, 10, 1, 1],
+	shop: [false, 0],
+	upgrades: {
+		shovel: [1, 5]
+	}
 }
 
 game = generateMap(20, 100);
