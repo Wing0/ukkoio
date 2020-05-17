@@ -26,7 +26,9 @@ function initialise(width, height, stick) {
 	    switch(e.which) {
 	        case 37: // left
 	        case 65: // left
-	        selectMove(-1, 0, stick);
+	        if (! gameData.shop[0]){
+	        	selectMove(-1, 0, stick);
+	        }
 	        break;
 
 	        case 38: // up
@@ -40,7 +42,9 @@ function initialise(width, height, stick) {
 
 	        case 39: // right
 	        case 68: // right
-	        selectMove(1, 0, stick);
+	        if (! gameData.shop[0]){
+	        	selectMove(1, 0, stick);
+	        }
 	        break;
 
 	        case 40: // down
