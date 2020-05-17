@@ -19,22 +19,22 @@ function initialise(width, height, stick) {
 	    switch(e.which) {
 	        case 37: // left
 	        case 65: // left
-	        moveStick(-1, 0, stick);
+	        validMoveStick(-1, 0, stick);
 	        break;
 
 	        case 38: // up
 	        case 87: // up
-	        moveStick(0, -1, stick);
+	        validMoveStick(0, -1, stick);
 	        break;
 
 	        case 39: // right
 	        case 68: // right
-	        moveStick(1, 0, stick);
+	        validMoveStick(1, 0, stick);
 	        break;
 
 	        case 40: // down
 	        case 83: // down
-	        moveStick(0, 1, stick);
+	        validMoveStick(0, 1, stick);
 	        break;
 
 	        default: return; // exit this handler for other keys
@@ -114,19 +114,46 @@ function drawStick(stick) {
 }
 
 function moveStick(x, y, stick) {
+	// Perform the movement
 	stick.x += x;
 	stick.y += y;
 	drawStick(stick)
 }
 
+function environmentCheckStick(stick) {
+	if (game[stick.x][stick.y + 1] == "empty") {
+		moveStick(0, 1, stick)
+		environmentCheckStick(stick)
+	}
+}
+
+function validMoveStick(x, y, stick) {
+	// Validate the movement before moving
+
+	if (game[stick.x + x][stick.y + y] == "empty") {
+		if (y < 0){
+			if (!stick.jump){
+				return;
+			}
+		}
+		moveStick(x, y, stick)
+		environmentCheckStick(stick)
+	}
+
+
+}
+
 // Run the game
 game = generateMap(10, 10);
 var stick = {
-	x: 3,
-	y: 3
+	x: 1,
+	y: 1,
+	jump: false
 }
 initialise(10, 10, stick);
 console.log(game)
 drawMap();
 drawStick(stick);
+environmentCheckStick(stick)
+
 
