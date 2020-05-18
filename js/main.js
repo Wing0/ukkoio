@@ -17,6 +17,7 @@ function initialise(width, height, stick) {
 
 	// Binding the keys
 	document.onkeydown = function(e) {
+		console.log(e.which)
 		if (gameData.alive) {
 		    switch(e.which) {
 		        case 37: // left
@@ -55,6 +56,11 @@ function initialise(width, height, stick) {
 		        if (gameData.shop[0]){
 		        	buyItem();
 		        }
+		        break;
+
+		        case 81: // Q
+		        case 69: // E
+		        useSkill(e.which);
 		        break;
 
 		        case 9: // TAB
@@ -96,9 +102,14 @@ function generateMap(width, height) {
 		["gold-five", 50, 3, 100, 'linear'],
 		["empty", 70, 30, 100, 'sin'],
 		["hard-five", 80, 0, 100, 'filler'],
-		["hard-ten", 50, 30, 150, 'linear'],
+		["hard-ten", 50, 20, 100, 'linear'],
         ["chest", 5, 0.3, 100, 'uniform'],
         ["monster-base", 40, 0.8, 100, 'uniform'],
+        ["monster-base", 90, 8, 150, 'linear'],
+		["gold-five", 100, 4, 150, 'uniform'],
+		["hard-ten", 100, 0, 150, 'filler'],
+		["empty", 90, 20, 150, 'uniform'],
+        ["chest-2", 90, 0.4, 150, 'uniform'],
 	]
 	
 	// Fill the map with empty tiles
@@ -192,9 +203,19 @@ function drawTile(v_x, v_y) {
 	if (v_x + gameData.view[2] < 0 || v_x + gameData.view[2] >= game.length || v_y + gameData.view[3] < 0 || v_y + gameData.view[3] >= game[0].length) {
 		$('#' + v_x + "-" + v_y).html(sprites["empty"].split(" ").join("&nbsp"))	
 	} else {
+		console.log("DRAWING:", game[v_x + gameData.view[2]][v_y + gameData.view[3]], v_x, v_y)
 		$('#' + v_x + "-" + v_y).html(sprites[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].split(" ").join("&nbsp"))	
 	}
-	
+}
+
+function drawAbsoluteTile(x, y) {
+	//  X and Y are in absolute coordinates!
+	// Draw the tile on the map to update, or re-draw
+	var v_x = x - gameData.view[2];
+	var v_y = y - gameData.view[3];
+	if (v_x >= -1 && v_x <= gameData.view[1] && v_y >= -1 && v_y <= gameData.view[2]){
+		drawTile(v_x, v_y)
+	}	
 }
 
 function drawStick(stick, pose) {
@@ -407,6 +428,22 @@ function dig(x, y, stick) {
 			}
 			gameData.last_move = [x, y];
 			dto = setTimeout(function(){
+				switch (game[stick.x + x][stick.y + y]) {
+					
+					case "chest-2":
+					stick.bombs += Math.round(Math.random()*5);
+					stick.money += Math.round(Math.random()*50);
+
+					case "chest":
+					stick.money += Math.round(Math.random()*50);
+					break;
+
+					case "bomb":
+					stick.bombs += 1
+					bto = false;
+					break;
+
+				}
 				game[stick.x + x][stick.y + y] = "empty";
 				if (stick.money == 0 && gameData.tiles[tileType].m > 0) {
 					say("Ooh, moneys!")
@@ -483,6 +520,7 @@ function updateUI() {
 	// Score & money
 	$("#score-display").html(gameData.stick.score);
 	$("#money-display").html(gameData.stick.money);
+	$("#bomb .indicator").html(gameData.stick.bombs);
 	$("#location-display").html("(" + gameData.stick.x + ", " + gameData.stick.y + ")");
 
 	// Level transition
@@ -615,10 +653,68 @@ function buyItem() {
 			}, 1500)
 		}
 		break;
+	}	
+}
 
+function useSkill(btn) {
+	// Uses the selected skill based on the button pressed
+	if (btn == 81) {
+		var shift = -1;
+	} else {
+		var shift = 1;
 	}
 
-	
+	var out = false;
+	var x = 0;
+	var y = 0;
+
+	if (game[gameData.stick.x + shift][gameData.stick.y] != "empty") {
+		say("Cannot put it there...", "warning");
+		return
+	}
+
+	out = dropCoordinates(gameData.stick.x + shift, gameData.stick.y)
+	x = out[0]
+	y = out[1]
+
+	game[x][y] = "bomb";
+	gameData.stick.bombs -= 1;
+	drawAbsoluteTile(x, y)
+	bto = setTimeout(function(){
+		explosion(x, y, 2)
+	}, 3000);
+}
+
+function dropCoordinates(x, y) {
+	if (game[x][y + 1] == "empty") {
+		return dropCoordinates(x, y + 1);
+	}
+	return [x, y];
+}
+
+function explosion(x, y, size) {
+	// Makes an explosion using x and y as origin
+	console.log("BOOM!")
+	say("BOOM!")
+	for (var i = - size; i <= size; i ++) {
+		if (x + i >= 0 && x + i < game.length) {
+			game[x + i][y] = "empty";	
+			// drawAbsoluteTile(x + i, y)
+			if (gameData.stick.x == x + i && gameData.stick.y == y) {
+				doDamage(50);
+			}
+		}
+	}
+	for (var i = - size; i <= size; i ++) {
+		if (y + i >= 0 && y + i < game[0].length) {
+			game[x][y + i] = "empty";	
+			// drawAbsoluteTile(x, y + i)
+			if (gameData.stick.x == x && gameData.stick.y == y + i) {
+				doDamage(50);
+			}
+		}
+	}
+	drawMap()
 }
 
 function say(message, level) {
@@ -692,8 +788,13 @@ var gameData = {
 		},
         "chest": {
             s: 100,
-            m: 50,
+            m: 20,
             h: 2
+        },
+        "chest-2": {
+            s: 200,
+            m: 20,
+            h: 5
         },
         "monster-base": {
             s: 200,
@@ -720,6 +821,11 @@ var gameData = {
             m: 20,
             h: 5
         },
+        "bomb": {
+            s: 0,
+            m: 0,
+            h: 0
+        },
 	},
 	stick: {
 		x: 5,
@@ -733,6 +839,7 @@ var gameData = {
 		pose: "stick-basic",
 		shoes: 1,
 		armor: 0,
+		bombs: 5,
 		fallDistance: 0
 	},
 	view: [5, 5, 3, 2],
@@ -768,9 +875,10 @@ var gameData = {
 	alive: true,
 }
 
-game = generateMap(20, 100);
+game = generateMap(20, 150);
 initialise(gameData.view[0], gameData.view[1], gameData.stick);
 var dto = false;
+var bto = false;
 console.log(game)
 drawMap(gameData.view);
 updateUI()
