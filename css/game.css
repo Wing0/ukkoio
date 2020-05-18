@@ -23,7 +23,7 @@
 
 
 #game .row {
-	position: static;
+	white-space: nowrap
 }
 
 #game .tile {
@@ -46,7 +46,7 @@
 }
 
 #game-field {
-	position: relative;
+	position: absolute;
 }
 
 #game-stick {

@@ -1,9 +1,9 @@
 function initialise(width, height, stick) {
 	// Creating the viewport elements
 	$("#game-field").html("");
-	for (var y = 0; y < height; y++) {
+	for (var y = -1; y < height + 1; y++) {
 		var row = $('<div class="row" id="' + y + '"></div>');
-		for (var x = 0; x < width; x++) {
+		for (var x = -1; x < width + 1; x++) {
 			var blockContainer = $('<div class="tile" id="' + x + "-" + y + '"></div>');
 			row.append(blockContainer);
 		}
@@ -12,7 +12,6 @@ function initialise(width, height, stick) {
 		$("#game-overlay").append($('<dif id="stick-container" style="top:0; left:0;"></div>'));
 		$("#stick-container").append($('<dif id="stick"></div>'));
 		$("#stick-container").append($('<dif id="message" style="display: none; position: absolute; bottom:110%; left:-2.5em;"></div>'));
-
 	}
 
 
@@ -114,11 +113,20 @@ function generateMap(width, height) {
 function drawMap() {
 	// Fill the viewport elements with the right content based on the map
 
-	for (var x = 0; x < gameData.view[0]; x++) {
-		for (var y = 0; y < gameData.view[1]; y++) {
+	for (var x = -1; x < gameData.view[0] + 1; x++) {
+		for (var y = -1; y < gameData.view[1] + 1; y++) {
 			drawTile(x, y);
 		}
 	};
+	console.log("WIDTH:", $("#game-field").css("width"));
+	$("#game-field").css({
+		left: "-" + $("#0-0").css("width"),
+		top: "-" + $("#0-0").css("height")
+	})
+	$("#game-field-container").css({
+		width: parseInt($("#game-field").width(), 10) - 2 * parseInt($("#0-0").css("width"), 10) + "px",
+		height: parseInt($("#game-field").height(), 10) - 2 * parseInt($("#0-0").css("height"), 10) + "px"
+	});
 }
 
 function drawTile(v_x, v_y) {
@@ -134,8 +142,8 @@ function drawStick(stick, pose) {
 	var y = stick.y - gameData.view[3];
 	var pos = $('#' + x + "-" + y).position();
 	$("#stick-container").css({
-		left: pos.left,
-		top: pos.top
+		left: pos.left + $("#game-field").position().left + $("#game-field-container").position().left,
+		top: pos.top + $("#game-field").position().top + $("#game-field-container").position().top
 	})
 }
 
@@ -149,6 +157,7 @@ function environmentCheckStick(stick) {
 
 function validMoveStick(x, y, stick) {
 	// Validate the movement before moving
+	console.log("validate")
 	if (stick.x <= game.length - 1 && stick.y <= game[stick.x].length - 1) {
 		if (game[stick.x + x][stick.y + y] == "empty") {
 			if (y < 0){
@@ -176,17 +185,26 @@ function validMoveStick(x, y, stick) {
 				environmentCheckStick(stick);
 			}, moveDuration);
 
-			var distance = "";
+			var distance = parseInt($("#0-0").css("width"), 10)
+			console.log("game-filed width", $("#game-field").width());
 			if (x < 0) {
-				distance = "-" +$("#0-0").css("width")
-			} else {
-				distance = $("#0-0").css("width")
+				console.log("ANIMATION:", distance, $("#game-field").position().left, $("#game-field").position().right - distance + "px")
+				$("#game-field").animate({
+					left: $("#game-field").position().left + distance + "px",
+				}, moveDuration, function(){
+					$("#game-field").css({left: -distance + "px"});
+				})
+			} 
+			if (x > 0) {
+				console.log("ANIMATION:", distance, $("#game-field").position().left, $("#game-field").position().right - distance + "px")
+				$("#game-field").animate({
+					left: $("#game-field").position().left - distance + "px",
+				}, moveDuration, function(){
+					$("#game-field").css({left: -distance + "px"});
+				})
 			}
-			$("#game-field").animate({
-				right: distance
-			}, moveDuration, function(){
-				$("#game-field").css({right: 0});
-			})
+			console.log("game-filed width post", $("#game-field").width());
+			console.log("ANIMATION -post:", distance, $("#game-field").position().left, $("#game-field").position().right - distance + "px")
 		}
 	}
 }
@@ -281,6 +299,7 @@ function selectMove(x, y, stick) {
 }
 
 function updateUI() {
+	console.log("game-filed width first", $("#game-field").width());
 	// This function updates the changes in the game data in the UI
 
 	// Score & money
@@ -317,13 +336,14 @@ function updateUI() {
 	for (var i = 0; i < Math.round(gameData.stick.max_health / 20) - hearts; i++) {
 		$("#health-container").append($('<span class="health off">♥</span>'));
 	}
+	console.log("game-filed width second", $("#game-field").width());
 }
 
 function toggleShop() {
 	// body...
-	if ($("#game-field-container").is(":visible")) {
+	if ($("#game-field-wrapper").is(":visible")) {
 		$("#stick-container").fadeOut(200);
-		$("#game-field-container").fadeOut(200, function(){
+		$("#game-field-wrapper").fadeOut(200, function(){
 			$("#game-store").fadeIn();
 			updateShop();
 			gameData.shop[0] = true;
@@ -331,7 +351,7 @@ function toggleShop() {
 		
 	} else {	
 		$("#game-store").fadeOut(200, function(){
-			$("#game-field-container").fadeIn();	
+			$("#game-field-wrapper").fadeIn();	
 			$("#stick-container").fadeIn(200);
 			drawMap()
 			drawStick(gameData.stick);
@@ -495,7 +515,7 @@ var gameData = {
 		pose: "stick-basic",
 		shoes: 1
 	},
-	view: [5, 5, 1, 1],
+	view: [5, 5, 3, 2],
 	shop: [false, 0],
 	upgrades: {
 		shovel: [1, 5], // Current level, starting cost
