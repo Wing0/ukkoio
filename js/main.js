@@ -558,12 +558,16 @@ function updateUI() {
 
 function increaseTimer() {
 	// Death timer
+	if (gameData.stick.score < 300) {
+		return;
+	}
 	var tick = 800;
 	gameData.moveTimer += 1;
 	if (gameData.moveTimer == gameData.moveTimerMax) {
 		gameOver();
 		return;
 	}
+	clearTimeout(deather);
 	deather = setTimeout(increaseTimer, tick);
 
 	console.log("Timer:", gameData.moveTimer)
@@ -575,21 +579,11 @@ function increaseTimer() {
 		if (gameData.moveTimer - gameData.moveTimerThreshold < 1) {
 			say("Better hurry!")	
 		}
-		
-
-		if (gameData.moveTimer > 1.5 * gameData.moveTimerThreshold) {
-			textColor = "white";
-		} else {
-			textColor = "black";
-		}
 
 
 		$("body").animate({
 			"background-color": "rgb(" + color + ", " + color + ", " + color + ")"
 		}, {easing: "linear", duration: tick});
-
-		$("#game-field").css({color: textColor})
-		$("#stick-container").css({color: textColor});
 	}
 	
 }
@@ -605,18 +599,10 @@ function resetTimer(keep) {
 	}
 	color = Math.round(255 - (gameData.moveTimer - gameData.moveTimerThreshold + 1) / (gameData.moveTimerMax - gameData.moveTimerThreshold) * 255);
 
-	if (gameData.moveTimer > gameData.moveTimerThreshold + 3) {
-		textColor = "white";
-	} else {
-		textColor = "black";
-	}
 
 	$("body").animate({
 		"background-color": "rgb(" + color + ", " + color + ", " + color + ")"
 	}, {easing: "linear", duration: 500});
-
-	$("#game-field").css({color: textColor});
-	$("#stick-container").css({color: textColor});
 }
 
 function toggleShop() {
