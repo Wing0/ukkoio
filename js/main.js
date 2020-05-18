@@ -219,7 +219,7 @@ function validMoveStick(x, y, stick) {
 				}
 			}
 
-			var moveDuration = 1000 / gameData.stick.shoes;
+			var moveDuration = 800 / gameData.stick.shoes;
 			gameData.last_move = [x, y];
 			if (x > 0) {
 				gameData.stick.pose = "stick-right";	
@@ -436,6 +436,7 @@ function toggleShop() {
 function updateShop() {
 	// body...
 	$("#store-shovel>.price").html(Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]));
+	$("#store-shoes>.price").html(Math.round(gameData.upgrades.shoes[1]*1.5**gameData.upgrades.shoes[0]));
 	$("#store-sight>.price").html(gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0]);
 	updateUI();
 }
@@ -454,6 +455,7 @@ function selectItem(direction) {
 function buyItem() {
 	switch (gameData.shop[1]) {
 		case 0:
+		console.log("bought shovel")
 		var cost = Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]);
 		if (gameData.stick.money >= cost) {
 			gameData.upgrades.shovel[0] += 1;
@@ -465,7 +467,8 @@ function buyItem() {
 				$(".chosen").removeClass("chosen");
 			}, 1500)
 		}
-		
+		break;
+
 		case 1:
 		var cost = gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0];
 		if (gameData.stick.money >= cost) {
@@ -480,6 +483,22 @@ function buyItem() {
 				$(".chosen").removeClass("chosen");
 			}, 1500)
 		}
+		break;
+
+		case 2:
+		console.log("bought shoes")
+		var cost = Math.round(gameData.upgrades.shoes[1]*1.5**gameData.upgrades.shoes[0]);
+		if (gameData.stick.money >= cost) {
+			gameData.upgrades.shoes[0] += 1;
+			gameData.stick.shoes *= 1.3;
+			gameData.stick.money -= cost;
+			$(".selector:eq("+gameData.shop[1]+")").addClass("chosen");
+			updateShop();
+			setTimeout(function(){
+				$(".chosen").removeClass("chosen");
+			}, 1500)
+		}
+		break;
 	}
 
 	
@@ -522,7 +541,7 @@ var gameData = {
 		},
 		"gold-one": {
 			distribute: true,
-			b: 5,
+			b: 3,
 			p: 15,
 			e: 40,
 			s: 5,
@@ -579,9 +598,9 @@ var gameData = {
 		x: 5,
 		y: 3,
 		jump: false,
-		shovel: 30,
+		shovel: 1,
 		score: 0,
-		money: 0,
+		money: 200,
 		health: 100,
 		max_health: 100,
 		pose: "stick-basic",
@@ -591,6 +610,7 @@ var gameData = {
 	shop: [false, 0],
 	upgrades: {
 		shovel: [1, 5], // Current level, starting cost
+		shoes: [1, 8], // Current level, starting cost
 		sight: [
 			0, [ // Level
 				[0, 0, 0],
@@ -607,7 +627,7 @@ var gameData = {
 	last_move: [0, 0]
 }
 
-game = generateMap(20, 15);
+game = generateMap(20, 100);
 initialise(gameData.view[0], gameData.view[1], gameData.stick);
 var dto = false;
 console.log(game)
