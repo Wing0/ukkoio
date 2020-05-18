@@ -17,4 +17,10 @@ var sprites = {
 	"stick-dig-down": "   O/\\ <br>  /\\_| <br> /|  V ",
 	"stick-dig-up": "   O A  <br>  |\\=| <br> / \\ | ",
 	"chest": " _____ <br>|==O==|<br>|_____|",
+	"monster-base":" _---_ <br>( ಠvಠ )<br> `---` ",
+	"monster-base-used":" _---_ <br>(  0  )<br> `---` ",
+	"monster-head":" _---_ <br>( ಠvಠ )<br> `---` ",
+	"monster-head-used":" _---_ <br>( ಠvಠ )<br> `---` ",
+	"monster-body":" _---_ <br>(     )<br> `---` ",
 };
+

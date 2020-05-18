@@ -97,7 +97,8 @@ function generateMap(width, height) {
 		["empty", 70, 30, 100, 'sin'],
 		["hard-five", 80, 0, 100, 'filler'],
 		["hard-ten", 50, 30, 150, 'linear'],
-        ["chest", 5, 0.4, 100, 'uniform'],
+        ["chest", 5, 0.3, 100, 'uniform'],
+        ["monster-base", 40, 0.8, 100, 'uniform'],
 	]
 	
 	// Fill the map with empty tiles
@@ -268,6 +269,35 @@ function environmentCheckStick(stick) {
 		gameData.stick.fallDistance = 0;
 	}
 
+	// Monster check
+	for (var i = -3; i <= 3; i++) {
+		if (stick.x + i >= 0 && stick.x + i < game.length && game[stick.x + i][stick.y] == "monster-base") {
+			switch (i) {
+				
+				case 1:
+				case -1:
+				doDamage(40);
+				game[stick.x + i][stick.y] = "monster-head-used";
+				break;
+
+				case 2:
+				case -2:
+				doDamage(20);
+				game[stick.x + i][stick.y] = "monster-base-used";
+				game[stick.x + i/2][stick.y] = "monster-head";
+				break;
+
+				case 3:
+				case -3:
+				doDamage(10);
+				game[stick.x + i][stick.y] = "monster-base-used";
+				game[stick.x + i - i/3][stick.y] = "monster-body";
+				game[stick.x + i/3][stick.y] = "monster-head";
+				break;
+			}
+		}
+	}
+	drawMap();
 }
 
 function validMoveStick(x, y, stick) {
@@ -665,6 +695,31 @@ var gameData = {
             m: 50,
             h: 2
         },
+        "monster-base": {
+            s: 200,
+            m: 50,
+            h: 10
+        },
+        "monster-base-used": {
+            s: 100,
+            m: 20,
+            h: 5
+        },
+        "monster-body": {
+            s: 1,
+            m: 0,
+            h: 2
+        },
+        "monster-head": {
+            s: 5,
+            m: 0,
+            h: 3
+        },
+        "monster-head-used": {
+            s: 100,
+            m: 20,
+            h: 5
+        },
 	},
 	stick: {
 		x: 5,
@@ -672,7 +727,7 @@ var gameData = {
 		jump: false,
 		shovel: 1,
 		score: 0,
-		money: 100,
+		money: 300,
 		health: 100,
 		maxHealth: 100,
 		pose: "stick-basic",
