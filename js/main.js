@@ -131,7 +131,7 @@ function drawMap() {
 function drawTile(v_x, v_y) {
 	//  X and Y are in view port coordinates!
 	// Draw the tile on the map to update, or re-draw
-	if (v_x + gameData.view[2] < 0 || v_x + gameData.view[2] >= game.length || v_y + gameData.view[3] < 0 || v_y + gameData.view[3] > game[0].length) {
+	if (v_x + gameData.view[2] < 0 || v_x + gameData.view[2] >= game.length || v_y + gameData.view[3] < 0 || v_y + gameData.view[3] >= game[0].length) {
 		$('#' + v_x + "-" + v_y).html(sprites["empty"].split(" ").join("&nbsp"))	
 	} else {
 		$('#' + v_x + "-" + v_y).html(sprites[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].split(" ").join("&nbsp"))	
@@ -145,16 +145,58 @@ function drawStick(stick, pose) {
 	var x = stick.x - gameData.view[2];
 	var y = stick.y - gameData.view[3];
 	var pos = $('#' + x + "-" + y).position();
-	$("#stick-container").css({
+	$("#stick-container").css({ // Potential conflict with move animations...
 		left: pos.left + $("#game-field").position().left + $("#game-field-container").position().left,
 		top: pos.top + $("#game-field").position().top + $("#game-field-container").position().top
 	})
 }
 
 function environmentCheckStick(stick) {
-	if (stick.x < game.length - 1 && stick.y < game[stick.x].length - 1 && game[stick.x][stick.y + 1] == "empty") {
-		moveStick(0, 1, stick)
-		environmentCheckStick(stick)
+	if (stick.y < game[stick.x].length - 1 && game[stick.x][stick.y + 1] == "empty") {
+		
+		// Stick falling animation
+		var fallDuration = 300;
+		var distance = parseInt($("#0-0").css("height"), 10)
+		var x_offset = Math.round(gameData.view[0]/2) - 1;
+		var y_offset = Math.round(gameData.view[1]/2) - 1;
+
+		gameData.stick.pose = "stick-fall";
+		drawStick(stick)
+		y = 1
+
+		// If the stick is close to the edge, move that instead of the level
+		if (stick.y < y_offset + 1 && y < 0 || stick.y < y_offset && y > 0 || stick.y > game[0].length - y_offset - 2 && y > 0 || stick.y > game[0].length - y_offset -1 && y < 0) {
+			console.log("Stick falling!")
+			if (y < 0) {
+				$("#stick-container").animate({
+					top: $("#stick-container").position().top - distance + "px",
+				}, fallDuration, function(){
+					gameData.stick.pose = "stick-basic";
+					moveStick(0, y, stick)
+					environmentCheckStick(stick)
+				})
+			} 
+			if (y > 0) {
+				$("#stick-container").animate({
+					top: $("#stick-container").position().top + distance + "px",
+				}, fallDuration, function(){
+					gameData.stick.pose = "stick-basic";
+					moveStick(0, y, stick)
+					environmentCheckStick(stick)
+				})
+			} 
+		} else {
+			console.log("Level falling")
+			// Level movement animation
+			$("#game-field").animate({
+				top: $("#game-field").position().top - distance + "px",
+			}, fallDuration, function(){
+				$("#game-field").css({top: distance + "px"});
+				gameData.stick.pose = "stick-basic";
+				moveStick(0, y, stick)
+				environmentCheckStick(stick)
+			})
+		}
 	}
 
 }
@@ -169,6 +211,7 @@ function validMoveStick(x, y, stick) {
 					return;
 				}
 			}
+
 			var moveDuration = 1000 / gameData.stick.shoes;
 			gameData.last_move = [x, y];
 			if (x > 0) {
@@ -529,13 +572,13 @@ var gameData = {
 		x: 5,
 		y: 3,
 		jump: false,
-		shovel: 1,
+		shovel: 30,
 		score: 0,
 		money: 0,
 		health: 100,
 		max_health: 100,
 		pose: "stick-basic",
-		shoes: 10
+		shoes: 1
 	},
 	view: [5, 5, 3, 2],
 	shop: [false, 0],
@@ -557,7 +600,7 @@ var gameData = {
 	last_move: [0, 0]
 }
 
-game = generateMap(20, 100);
+game = generateMap(20, 15);
 initialise(gameData.view[0], gameData.view[1], gameData.stick);
 var dto = false;
 console.log(game)
