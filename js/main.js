@@ -72,6 +72,20 @@ function generateMap(width, height) {
 	// Generating the data for the entire map
 
 	console.log("Generating the map...")
+
+	generationData = [
+		["empty", 0, 0, 4, 'filler'],
+		["basic", 4, 0, 40, 'filler'], // tile type, start, peak frequency, end, interpolation method
+		["gold-one", 5, 18, 40, 'sin'],
+		["hard-one", 40, 0, 80, 'filler'],
+		["hard-one-gold-three", 40, 10, 100, 'linear'],
+		["gold-three", 30, 10, 80, 'sin'],
+		["gold-five", 50, 3, 100, 'linear'],
+		["empty", 70, 30, 100, 'sin'],
+		["hard-five", 80, 0, 100, 'filler'],
+		["hard-ten", 50, 30, 150, 'linear'],
+        ["chest", 5, 0.4, 100, 'uniform'],
+	]
 	
 	// Fill the map with empty tiles
 	var game = [];
@@ -82,26 +96,56 @@ function generateMap(width, height) {
 	// Generating the map
 	for (var x = 0; x < width; x++) {
 		for (var y = 0; y < height; y++) {
-			if (y < 4) {
-				game[x][y] = 'empty';
-			} else {
-				var rnd = Math.random();
-				var inc = 0;
-				var found = false;
-				for (var t in gameData.tiles){
-					if (gameData.tiles[t].distribute && y > gameData.tiles[t].b && y < gameData.tiles[t].e) {
-						console.log(inc, )
-						// If rnd is smaller than the expected propability, create the special tile
-						if (rnd < inc + (Math.sin((y - gameData.tiles[t].b)/(gameData.tiles[t].e - gameData.tiles[t].b)*Math.PI*2 - Math.PI/2)+1) * gameData.tiles[t].p/100) {
-							game[x][y] = t;
+			var rnd = Math.random();
+			var inc = 0;
+			var found = false;
+
+			// Check which non-filler blocks apply
+			for (var i = 0; i < generationData.length; i++) {
+				if (y >= generationData[i][1] && y < generationData[i][3] && generationData[i][4] != 'filler') {
+					console.log(y, generationData[i][0])
+					var p = 0; // If rnd is smaller than the expected propability p, create the special tile
+					switch (generationData[i][4]) {
+
+						case 'sin':
+						p = (Math.sin((y - generationData[i][1])/(generationData[i][3] - generationData[i][1])*Math.PI*2 - Math.PI/2)+1) * generationData[i][2]/100
+						if (rnd < inc + p) {
+							game[x][y] = generationData[i][0];
 							found = true;
-							break;
 						}
-						inc += (Math.sin((y - gameData.tiles[t].b)/(gameData.tiles[t].e - gameData.tiles[t].b)*Math.PI*2 - Math.PI/2)+1) * gameData.tiles[t].p/100
+						break;
+						
+						case 'linear':
+						p = (y - generationData[i][1])/(generationData[i][3] - generationData[i][1]) * generationData[i][2]/100
+						if (rnd < inc + p) {
+							game[x][y] = generationData[i][0];
+							found = true;
+						}
+						break;
+						
+						case 'uniform':
+						p = generationData[i][2]/100
+						if (rnd < inc + p) {
+							game[x][y] = generationData[i][0];
+							found = true;
+						}
+						break;
+
+					}
+					inc += p
+					if (found) {
+						console.log("placed!")
+						break;
 					}
 				}
-				if (!found) {
-					game[x][y] = 'basic';
+			}
+			// Use the matching filler block if no block placed
+			if (!found) {
+				for (var i = 0; i < generationData.length; i++) {
+					if (y >= generationData[i][1] && y < generationData[i][3] && generationData[i][4] == 'filler') {
+						game[x][y] = generationData[i][0];
+						break;
+					}
 				}
 			}
 		}
@@ -167,7 +211,6 @@ function environmentCheckStick(stick) {
 
 		// If the stick is close to the edge, move that instead of the level
 		if (stick.y < y_offset + 1 && y < 0 || stick.y < y_offset && y > 0 || stick.y > game[0].length - y_offset - 2 && y > 0 || stick.y > game[0].length - y_offset -1 && y < 0) {
-			console.log("Stick falling!")
 			if (y < 0) {
 				dto = true;
 				$("#stick-container").animate({
@@ -191,7 +234,6 @@ function environmentCheckStick(stick) {
 				})
 			} 
 		} else {
-			console.log("Level falling")
 			// Level movement animation
 			dto = true;
 			$("#game-field").animate({
@@ -210,7 +252,6 @@ function environmentCheckStick(stick) {
 
 function validMoveStick(x, y, stick) {
 	// Validate the movement before moving
-	console.log("validate")
 	if (stick.x <= game.length - 1 && stick.y <= game[stick.x].length - 1) {
 		if (game[stick.x + x][stick.y + y] == "empty") {
 			if (y < 0){
@@ -370,7 +411,6 @@ function selectMove(x, y, stick) {
 }
 
 function updateUI() {
-	console.log("game-filed width first", $("#game-field").width());
 	// This function updates the changes in the game data in the UI
 
 	// Score & money
@@ -384,14 +424,12 @@ function updateUI() {
 	var step = 0;
 	if (gameData.stick.x > x_offset - 1 && gameData.stick.x < game.length - x_offset && gameData.stick.x - gameData.view[2] != x_offset) {
 		step = (gameData.stick.x - x_offset) - gameData.view[2];
-		console.log("Transitioning horisontal:", x_offset, step)
 		gameData.view[2] = Math.min(game.length - gameData.view[0], gameData.view[2] + step);
 		drawMap()
 		drawStick(gameData.stick)
 	}
 	if (gameData.stick.y > y_offset && gameData.stick.y < game[0].length - y_offset && gameData.stick.y - gameData.view[3] != y_offset) {
 		step = (gameData.stick.y - y_offset) - gameData.view[3];
-		console.log("Transitioning vertical:", y_offset, step)
 		gameData.view[3] = Math.min(game[0].length - gameData.view[1], gameData.view[3] + step);
 		drawMap()
 		drawStick(gameData.stick)
@@ -407,7 +445,6 @@ function updateUI() {
 	for (var i = 0; i < Math.round(gameData.stick.max_health / 20) - hearts; i++) {
 		$("#health-container").append($('<span class="health off">♥</span>'));
 	}
-	console.log("game-filed width second", $("#game-field").width());
 }
 
 function toggleShop() {
@@ -442,7 +479,6 @@ function updateShop() {
 
 function selectItem(direction) {
 	// Move the item slector
-	console.log("selectiong...")
 	gameData.shop[1] += direction;
 	gameData.shop[1] = Math.max(0, gameData.shop[1])
 	gameData.shop[1] = Math.min($(".selector").length - 1, gameData.shop[1])
@@ -454,7 +490,6 @@ function selectItem(direction) {
 function buyItem() {
 	switch (gameData.shop[1]) {
 		case 0:
-		console.log("bought shovel")
 		var cost = Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]);
 		if (gameData.stick.money >= cost) {
 			gameData.upgrades.shovel[0] += 1;
@@ -485,7 +520,6 @@ function buyItem() {
 		break;
 
 		case 2:
-		console.log("bought shoes")
 		var cost = Math.round(gameData.upgrades.shoes[1]*1.5**gameData.upgrades.shoes[0]);
 		if (gameData.stick.money >= cost) {
 			gameData.upgrades.shoes[0] += 1;
@@ -533,65 +567,50 @@ var gameData = {
 	// Data for the distribution of each tile
 	tiles: {
 		"basic": {
-			distribute: false,
 			s: 1,
 			m: 0,
 			h: 1
 		},
 		"gold-one": {
-			distribute: true,
-			b: 3,
-			p: 18,
-			e: 40,
 			s: 5,
 			m: 1,
 			h: 1
 		},
 		"hard-one": {
-			distribute: true,
-			b: 15,
-			p: 25,
-			e: 60,
 			s: 5,
 			m: 0,
 			h: 2
 		},
 		"hard-one-gold-three": {
-			distribute: true,
-			b: 20,
-			p: 5,
-			e: 70,
 			s: 20,
 			m: 3,
 			h: 2
 		},
+		"hard-five": {
+			s: 15,
+			m: 0,
+			h: 5
+		},
 		"gold-three": {
-			distribute: true,
-			b: 30,
-			p: 2,
-			e: 80,
 			s: 15,
 			m: 3,
 			h: 1
 		},
 		"gold-five": {
-			distribute: true,
-			b: 50,
-			p: 3,
-			e: 100,
 			s: 25,
 			m: 5,
 			h: 1
 		}, 
 		"hard-ten": {
-			distribute: true,
-			b: 50,
-			p: 30,
-			e: 150,
 			s: 25,
 			m: 0,
 			h: 10
 		},
+        "chest": {
+            s: 100,
+            m: 50,
+            h: 2
+        },
 	},
 	stick: {
 		x: 5,

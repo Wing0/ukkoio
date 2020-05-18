@@ -6,6 +6,7 @@ var sprites = {
 	"gold-five": "|0```0|<br>|  0  |<br>|0___0|",
 	"hard-one": "|: : :|<br>: : : :<br>|: : :|",
 	"hard-one-gold-three": "|0 : 0|<br>|: 0 :|<br>|: : :|",
+	"hard-five": "|+++++|<br>|+++++|<br>|+++++|",
 	"hard-ten": "{|||||}<br>{|||||}<br>{|||||}",
 	"stick-basic": "   O   <br>  /|\\  <br>  / \\  ",
 	"stick-fall": " \\_O_/ <br>   |   <br>  / \\  ",
@@ -15,4 +16,5 @@ var sprites = {
 	"stick-dig-left": "    O__<br><--/|-/<br>   / \\ ",
 	"stick-dig-down": "   O/\\ <br>  /\\_| <br> /|  V ",
 	"stick-dig-up": "   O A  <br>  |\\=| <br> / \\ | ",
+	"chest": " _____ <br>|==O==|<br>|_____|",
 };
