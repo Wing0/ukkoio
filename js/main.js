@@ -118,7 +118,6 @@ function drawMap() {
 			drawTile(x, y);
 		}
 	};
-	console.log("WIDTH:", $("#game-field").css("width"));
 	$("#game-field").css({
 		left: "-" + $("#0-0").css("width"),
 		top: "-" + $("#0-0").css("height")
@@ -132,7 +131,12 @@ function drawMap() {
 function drawTile(v_x, v_y) {
 	//  X and Y are in view port coordinates!
 	// Draw the tile on the map to update, or re-draw
-	$('#' + v_x + "-" + v_y).html(sprites[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].split(" ").join("&nbsp"))
+	if (v_x + gameData.view[2] < 0 || v_x + gameData.view[2] >= game.length || v_y + gameData.view[3] < 0 || v_y + gameData.view[3] > game[0].length) {
+		$('#' + v_x + "-" + v_y).html(sprites["empty"].split(" ").join("&nbsp"))	
+	} else {
+		$('#' + v_x + "-" + v_y).html(sprites[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].split(" ").join("&nbsp"))	
+	}
+	
 }
 
 function drawStick(stick, pose) {
@@ -174,8 +178,9 @@ function validMoveStick(x, y, stick) {
 			if (x < 0) {
 				gameData.stick.pose = "stick-left";	
 			}
-
 			drawStick(stick);
+
+			// Stick returns normal once movement complete
 			dto = setTimeout(function(){
 				gameData.last_move = [0, 0]
 				gameData.stick.pose = "stick-basic";
@@ -185,26 +190,43 @@ function validMoveStick(x, y, stick) {
 				environmentCheckStick(stick);
 			}, moveDuration);
 
+
+			// Calculate animation
+
 			var distance = parseInt($("#0-0").css("width"), 10)
-			console.log("game-filed width", $("#game-field").width());
-			if (x < 0) {
-				console.log("ANIMATION:", distance, $("#game-field").position().left, $("#game-field").position().right - distance + "px")
-				$("#game-field").animate({
-					left: $("#game-field").position().left + distance + "px",
-				}, moveDuration, function(){
-					$("#game-field").css({left: -distance + "px"});
-				})
-			} 
-			if (x > 0) {
-				console.log("ANIMATION:", distance, $("#game-field").position().left, $("#game-field").position().right - distance + "px")
-				$("#game-field").animate({
-					left: $("#game-field").position().left - distance + "px",
-				}, moveDuration, function(){
-					$("#game-field").css({left: -distance + "px"});
-				})
+			var x_offset = Math.round(gameData.view[0]/2) - 1;
+			var y_offset = Math.round(gameData.view[1]/2) - 1;
+
+			// If the stick is close to the edge, move that instead of the level
+			if (stick.x < x_offset + 1 && x < 0 || stick.x < x_offset && x > 0 || stick.x > game.length - x_offset - 2 && x > 0 || stick.x > game.length - x_offset -1 && x < 0) {
+				if (x < 0) {
+					$("#stick-container").animate({
+						left: $("#stick-container").position().left - distance + "px",
+					}, moveDuration)
+				} 
+				if (x > 0) {
+					$("#stick-container").animate({
+						left: $("#stick-container").position().left + distance + "px",
+					}, moveDuration)
+				} 
+			} else {
+
+				// Level movement animation
+				if (x < 0) {
+					$("#game-field").animate({
+						left: $("#game-field").position().left + distance + "px",
+					}, moveDuration, function(){
+						$("#game-field").css({left: -distance + "px"});
+					})
+				} 
+				if (x > 0) {
+					$("#game-field").animate({
+						left: $("#game-field").position().left - distance + "px",
+					}, moveDuration, function(){
+						$("#game-field").css({left: -distance + "px"});
+					})
+				}
 			}
-			console.log("game-filed width post", $("#game-field").width());
-			console.log("ANIMATION -post:", distance, $("#game-field").position().left, $("#game-field").position().right - distance + "px")
 		}
 	}
 }
@@ -513,7 +535,7 @@ var gameData = {
 		health: 100,
 		max_health: 100,
 		pose: "stick-basic",
-		shoes: 1
+		shoes: 10
 	},
 	view: [5, 5, 3, 2],
 	shop: [false, 0],
