@@ -190,6 +190,7 @@ function dig(x, y, stick) {
 			if (y < 0) {
 				drawStick(stick, "stick-dig-up");
 			}
+			gameData.last_move = [x, y];
 			dto = setTimeout(function(){
 				game[stick.x + x][stick.y + y] = "empty";
 				if (stick.money == 0 && gameData.tiles[tileType].m > 0) {
@@ -197,6 +198,7 @@ function dig(x, y, stick) {
 				}
 				stick.score += gameData.tiles[tileType].s;
 				stick.money += gameData.tiles[tileType].m;
+				gameData.last_move = [0, 0]
 				var v_x = stick.x - gameData.view[2] + x;
 				var v_y = stick.y - gameData.view[3] + y;
 				drawTile(v_x, v_y)
@@ -226,7 +228,18 @@ function selectMove(x, y, stick) {
 		say("O-o-oou, cannot go further", "warning")
 		return;
 	}
-	clearTimeout(dto);
+
+	if (gameData.last_move[0] != 0 || gameData.last_move[1] != 0) {
+		if (dto) {
+			if (gameData.last_move[0] != x || gameData.last_move[1] != y) {
+				clearTimeout(dto);	
+				dto = false;
+			} else {
+				return;
+			}
+		}
+	}
+	
 	if (game[stick.x + x][stick.y + y] == "empty") {
 		validMoveStick(x, y, stick);
 	} else {
@@ -261,6 +274,16 @@ function updateUI() {
 		drawStick(gameData.stick)
 	}
 
+	// Update the health bar
+	var hearts = Math.floor(gameData.stick.health / 20)
+	$("#health-container").html("")
+	for (var i = 0; i < hearts; i++) {
+		$("#health-container").append($('<span class="health on">♥</span>'));
+	}
+	
+	for (var i = 0; i < Math.round(gameData.stick.max_health / 20) - hearts; i++) {
+		$("#health-container").append($('<span class="health off">♥</span>'));
+	}
 }
 
 function toggleShop() {
@@ -433,7 +456,9 @@ var gameData = {
 		jump: false,
 		shovel: 1,
 		score: 0,
-		money: 0
+		money: 0,
+		health: 100,
+		max_health: 100
 	},
 	view: [5, 5, 1, 1],
 	shop: [false, 0],
@@ -451,7 +476,8 @@ var gameData = {
 				[1000, 1, 1]
 			]
 		]
-	}
+	},
+	last_move: [0, 0]
 }
 
 game = generateMap(20, 100);
@@ -459,8 +485,8 @@ initialise(gameData.view[0], gameData.view[1], gameData.stick);
 var dto = false;
 console.log(game)
 drawMap(gameData.view);
+updateUI()
 drawStick(gameData.stick);
 environmentCheckStick(gameData.stick)
-updateUI()
 say("Where am I? What is this place?")
 

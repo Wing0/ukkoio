@@ -43,6 +43,17 @@
 	font-weight: bold;
 }
 
+#game-stick {
+	text-align: right;
+}
+
+#game-stick .health.on {
+	color: black;
+}
+
+#game-stick .health.off {
+	color: lightgray;
+}
 
 #stick-container {
 	position: absolute;
