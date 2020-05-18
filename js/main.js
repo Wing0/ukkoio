@@ -161,6 +161,7 @@ function environmentCheckStick(stick) {
 		var y_offset = Math.round(gameData.view[1]/2) - 1;
 
 		gameData.stick.pose = "stick-fall";
+		gameData.last_move = [0, 1];
 		drawStick(stick)
 		y = 1
 
@@ -168,32 +169,38 @@ function environmentCheckStick(stick) {
 		if (stick.y < y_offset + 1 && y < 0 || stick.y < y_offset && y > 0 || stick.y > game[0].length - y_offset - 2 && y > 0 || stick.y > game[0].length - y_offset -1 && y < 0) {
 			console.log("Stick falling!")
 			if (y < 0) {
+				dto = true;
 				$("#stick-container").animate({
 					top: $("#stick-container").position().top - distance + "px",
 				}, fallDuration, function(){
 					gameData.stick.pose = "stick-basic";
 					moveStick(0, y, stick)
+					dto = false;
 					environmentCheckStick(stick)
 				})
 			} 
 			if (y > 0) {
+				dto = true;
 				$("#stick-container").animate({
 					top: $("#stick-container").position().top + distance + "px",
 				}, fallDuration, function(){
 					gameData.stick.pose = "stick-basic";
 					moveStick(0, y, stick)
+					dto = false;
 					environmentCheckStick(stick)
 				})
 			} 
 		} else {
 			console.log("Level falling")
 			// Level movement animation
+			dto = true;
 			$("#game-field").animate({
 				top: $("#game-field").position().top - distance + "px",
 			}, fallDuration, function(){
 				$("#game-field").css({top: distance + "px"});
 				gameData.stick.pose = "stick-basic";
 				moveStick(0, y, stick)
+				dto = false;
 				environmentCheckStick(stick)
 			})
 		}
