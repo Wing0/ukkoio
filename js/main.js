@@ -87,6 +87,7 @@ function gameOver() {
 	$("body").animate({
 		"background-color": "black"
 	}, {easing: "linear", duration: 1000});
+	$("#game").append('<div id="end-score">Your score:' + gameData.stick.score + "</div>")
 }
 
 function generateMap(width, height) {
