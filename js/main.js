@@ -17,55 +17,68 @@ function initialise(width, height, stick) {
 
 	// Binding the keys
 	document.onkeydown = function(e) {
-		console.log(e.which)
-	    switch(e.which) {
-	        case 37: // left
-	        case 65: // left
-	        if (! gameData.shop[0]){
-	        	selectMove(-1, 0, stick);
-	        }
-	        break;
+		if (gameData.alive) {
+		    switch(e.which) {
+		        case 37: // left
+		        case 65: // left
+		        if (! gameData.shop[0]){
+		        	selectMove(-1, 0, stick);
+		        }
+		        break;
 
-	        case 38: // up
-	        case 87: // up
-	        if (! gameData.shop[0]){
-	        	selectMove(0, -1, stick);
-	        } else {
-	        	selectItem(-1);
-	        }
-	        break;
+		        case 38: // up
+		        case 87: // up
+		        if (! gameData.shop[0]){
+		        	selectMove(0, -1, stick);
+		        } else {
+		        	selectItem(-1);
+		        }
+		        break;
 
-	        case 39: // right
-	        case 68: // right
-	        if (! gameData.shop[0]){
-	        	selectMove(1, 0, stick);
-	        }
-	        break;
+		        case 39: // right
+		        case 68: // right
+		        if (! gameData.shop[0]){
+		        	selectMove(1, 0, stick);
+		        }
+		        break;
 
-	        case 40: // down
-	        case 83: // down
-	        if (! gameData.shop[0]){
-	        	selectMove(0, 1, stick);
-	        } else {
-	        	selectItem(1);
-	        }
-	        break;
+		        case 40: // down
+		        case 83: // down
+		        if (! gameData.shop[0]){
+		        	selectMove(0, 1, stick);
+		        } else {
+		        	selectItem(1);
+		        }
+		        break;
 
-	        case 13: // Enter
-	        if (gameData.shop[0]){
-	        	buyItem();
-	        }
-	        break;
+		        case 13: // Enter
+		        if (gameData.shop[0]){
+		        	buyItem();
+		        }
+		        break;
 
-	        case 9: // TAB
-	        toggleShop();
-	        break;
+		        case 9: // TAB
+		        toggleShop();
+		        break;
 
-	        default: return; // exit this handler for other keys
-	    }
-	    e.preventDefault(); // prevent the default action (scroll / move caret)
+		        default: return; // exit this handler for other keys
+		    }
+		    e.preventDefault(); // prevent the default action (scroll / move caret)
+		}
 	};
 
+}
+
+function gameOver() {
+	gameData.alive = false;
+	$("#game").html("     ___________    <br>   / ___________\\        <br>  /  /<br> |  |                    _____       ___       ___   __________<br> |  |     _________     /     \\     |   \\    /   |  |   ______/   <br> |  |    /______  |    /  /_\\  \\    |    \\__/    |  |  |_______   <br> \\  \\          / /    /  _____  \\   |  |\\____/|  |  |   ______/ <br>  \\  \\________/ /    /  /     \\  \\  |  |      |  |  |  |_______  <br>   \\ __________/    /  /       \\  \\ |  |      |  |  |_________/  <br>       _________    <br>     /  _______  \\   <br>    /  /       \\  \\    <br>   |  |        |  |   __          ___    __________   ___   ____ <br>   |  |        |  |  \\  \\        /  /   |   ______/  |  | /  __|  <br>   |  |        |  |   \\  \\      /  /    |  |______   |  |  /      <br>   |  |        |  |    \\  \\    /  /     |   ______/  |   /  <br>    \\  \\______/  /      \\  \\__/  /      |  |         |  |   <br>     \\__________/        \\______/       |_________/  |__|      <br>".split(" ").join("&nbsp"));
+	$("#game").css({
+		"background-color": "black",
+		"color": "white"
+	});
+	$("body").css({
+		"background-color": "black",
+	});
 }
 
 function generateMap(width, height) {
@@ -76,7 +89,7 @@ function generateMap(width, height) {
 	generationData = [
 		["empty", 0, 0, 4, 'filler'],
 		["basic", 4, 0, 40, 'filler'], // tile type, start, peak frequency, end, interpolation method
-		["gold-one", 5, 18, 40, 'sin'],
+		["gold-one", 0, 18, 40, 'sin'],
 		["hard-one", 40, 0, 80, 'filler'],
 		["hard-one-gold-three", 40, 10, 100, 'linear'],
 		["gold-three", 30, 10, 80, 'sin'],
@@ -205,6 +218,7 @@ function environmentCheckStick(stick) {
 		var y_offset = Math.round(gameData.view[1]/2) - 1;
 
 		gameData.stick.pose = "stick-fall";
+		gameData.stick.fallDistance += 1;
 		gameData.last_move = [0, 1];
 		drawStick(stick)
 		y = 1
@@ -246,6 +260,12 @@ function environmentCheckStick(stick) {
 				environmentCheckStick(stick)
 			})
 		}
+	} else {
+		if (gameData.stick.fallDistance > 1) {
+			var dmg = (gameData.stick.fallDistance - 1) ** 2 * 10;
+			doDamage(dmg);
+		}
+		gameData.stick.fallDistance = 0;
 	}
 
 }
@@ -410,6 +430,23 @@ function selectMove(x, y, stick) {
 	}
 }
 
+
+function doDamage(dmg) {
+	// Reduces the stick health
+	var effectiveDmg = Math.max(0, dmg - gameData.stick.armor);
+	gameData.stick.health -= effectiveDmg;
+	updateUI()
+	if (effectiveDmg > 0) {
+		say("(≧︿≦)");	
+	} else {
+		say("¯\_(ツ)_/¯");
+	}
+	
+	if (gameData.stick.health <= 0) {
+		gameOver();
+	}
+}
+
 function updateUI() {
 	// This function updates the changes in the game data in the UI
 
@@ -442,7 +479,7 @@ function updateUI() {
 		$("#health-container").append($('<span class="health on">♥</span>'));
 	}
 	
-	for (var i = 0; i < Math.round(gameData.stick.max_health / 20) - hearts; i++) {
+	for (var i = 0; i < Math.round(gameData.stick.maxHealth / 20) - hearts; i++) {
 		$("#health-container").append($('<span class="health off">♥</span>'));
 	}
 }
@@ -474,6 +511,7 @@ function updateShop() {
 	$("#store-shovel>.price").html(Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]));
 	$("#store-shoes>.price").html(Math.round(gameData.upgrades.shoes[1]*1.5**gameData.upgrades.shoes[0]));
 	$("#store-sight>.price").html(gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0]);
+	$("#store-armor>.price").html(gameData.upgrades.armor[1][gameData.upgrades.armor[0] + 1][0]);
 	updateUI();
 }
 
@@ -532,6 +570,22 @@ function buyItem() {
 			}, 1500)
 		}
 		break;
+
+		case 3:
+		var cost = gameData.upgrades.armor[1][gameData.upgrades.armor[0] + 1][0];
+		if (gameData.stick.money >= cost) {
+			gameData.upgrades.armor[0] += 1;
+			gameData.stick.money -= cost;
+			gameData.stick.armor += gameData.upgrades.armor[1][gameData.upgrades.armor[0]][1];
+			$(".selector:eq("+gameData.shop[1]+")").addClass("chosen");
+			updateShop();
+			initialise(gameData.view[0], gameData.view[1], gameData.stick)
+			setTimeout(function(){
+				$(".chosen").removeClass("chosen");
+			}, 1500)
+		}
+		break;
+
 	}
 
 	
@@ -618,17 +672,30 @@ var gameData = {
 		jump: false,
 		shovel: 1,
 		score: 0,
-		money: 0,
+		money: 100,
 		health: 100,
-		max_health: 100,
+		maxHealth: 100,
 		pose: "stick-basic",
-		shoes: 1
+		shoes: 1,
+		armor: 0,
+		fallDistance: 0
 	},
 	view: [5, 5, 3, 2],
 	shop: [false, 0],
 	upgrades: {
 		shovel: [1, 5], // Current level, starting cost
 		shoes: [1, 8], // Current level, starting cost
+		armor: [
+			0, [ // Level
+				[0, 0],
+				[20, 5], // cost, armor
+				[40, 10],
+				[100, 20],
+				[200, 30],
+				[400, 40],
+				[1000, 60]
+			]
+		],
 		sight: [
 			0, [ // Level
 				[0, 0, 0],
@@ -642,7 +709,8 @@ var gameData = {
 			]
 		]
 	},
-	last_move: [0, 0]
+	last_move: [0, 0],
+	alive: true,
 }
 
 game = generateMap(20, 100);
@@ -653,5 +721,11 @@ drawMap(gameData.view);
 updateUI()
 drawStick(gameData.stick);
 environmentCheckStick(gameData.stick)
-say("Where am I? What is this place?")
+say("Where am I? What is this place?")	
+setTimeout(function() {
+	say("Why do I feel so... sticky?");
+	setTimeout(function() {say("(˵ ͡° ͜ʖ ͡°˵)")}, 4000);
+}, 8000)
+
+ 
 
