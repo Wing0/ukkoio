@@ -1,6 +1,6 @@
 function initialise(width, height, stick) {
 	// Creating the viewport elements
-
+	$("#game-field").html();
 	for (var y = 0; y < height; y++) {
 		var row = $('<div class="row" id="' + y + '"></div>');
 		for (var x = 0; x < width; x++) {
@@ -11,12 +11,6 @@ function initialise(width, height, stick) {
 
 		$("#game-overlay").append($('<dif id="stick-container" style="top:0; left:0;"></div>'));
 		$("#stick-container").append($('<dif id="stick"></div>'));
-		$("#stick-container").append($('<dif id="message" style="display: none; position: absolute; bottom:110%; left:-2.5em;"></div>'));
-		$("#stick-container").append($('<dif id="move-right" class="arrow" style="display: none; position: absolute; bottom:10%; left:100%;">➔</div>'));
-		$("#stick-container").append($('<dif id="move-left" class="arrow" style="display: none; position: absolute; bottom:13%; right:100%; transform: rotate(180deg);">➔</div>'));
-		$("#stick-container").append($('<dif id="move-down" class="arrow" style="display: none; position: absolute; top:90%; right:40%; transform: rotate(90deg);">➔</div>'));
-		$("#stick-container").append($('<dif id="move-up" class="arrow" style="display: none; position: absolute; bottom:85%; left:38%; transform: rotate(270deg);">➔</div>'));
-	
 	}
 
 
@@ -173,8 +167,8 @@ function moveStick(x, y, stick) {
 	// Perform the movement
 	stick.x += x;
 	stick.y += y;
-	drawStick(stick)
 	updateUI()
+	drawStick(stick)
 }
 
 function dig(x, y, stick) {
@@ -244,60 +238,25 @@ function updateUI() {
 	// Score & money
 	$("#score-display").html(gameData.stick.score);
 	$("#money-display").html(gameData.stick.money);
-
-
+	$("#location-display").html("(" + gameData.stick.x + ", " + gameData.stick.y + ")");
 
 	// Level transition
-	if (gameData.stick.x < game.length && gameData.stick.x - gameData.view[2] == gameData.view[0] - 1) {
-		gameData.view[2] = Math.min(game.length - gameData.view[0], gameData.view[2] + (gameData.view[0] - 2))
+	var x_offset = Math.round(gameData.view[0]/2) - 1;
+	var y_offset = Math.round(gameData.view[1]/2) - 1;
+	var step = 0;
+	if (gameData.stick.x > x_offset - 1 && gameData.stick.x < game.length - x_offset && gameData.stick.x - gameData.view[2] != x_offset) {
+		step = (gameData.stick.x - x_offset) - gameData.view[2];
+		console.log("Transitioning horisontal:", x_offset, step)
+		gameData.view[2] = Math.min(game.length - gameData.view[0], gameData.view[2] + step);
 		drawMap()
 		drawStick(gameData.stick)
 	}
-	if (gameData.stick.x > 0 && gameData.stick.x - gameData.view[2] == 0) {
-		gameData.view[2] = Math.max(0, gameData.view[2] - (gameData.view[0] - 2))
+	if (gameData.stick.y > y_offset && gameData.stick.y < game[0].length - y_offset && gameData.stick.y - gameData.view[3] != y_offset) {
+		step = (gameData.stick.y - y_offset) - gameData.view[3];
+		console.log("Transitioning vertical:", y_offset, step)
+		gameData.view[3] = Math.min(game[0].length - gameData.view[1], gameData.view[3] + step);
 		drawMap()
 		drawStick(gameData.stick)
-	}
-	if (gameData.stick.y < game[0].length && gameData.stick.y - gameData.view[3] == gameData.view[1] - 1) {
-		gameData.view[3] = Math.min(game[0].length - gameData.view[1], gameData.view[3] + (gameData.view[1] - 2))
-		drawMap()
-		drawStick(gameData.stick)
-	}
-	if (gameData.stick.y > 0 && gameData.stick.y - gameData.view[3] == 0) {
-		gameData.view[3] = Math.max(0, gameData.view[3] - (gameData.view[1] - 2))
-		drawMap()
-		drawStick(gameData.stick)
-	}
-
-
-	// Transition hint arrows
-	if (gameData.stick.x < game.length - 2 && gameData.stick.x < game.length && gameData.stick.x - gameData.view[2] == gameData.view[0] - 2 && game[gameData.stick.x + 1][gameData.stick.y] == "empty") {
-		$("#move-right").fadeIn(200);
-	} else {
-		if ($("#move-right").is(":visible")) {
-			$("#move-right").fadeOut(0);
-		}
-	}
-	if (gameData.stick.x > 1 && gameData.stick.x - gameData.view[2] == 1 && game[gameData.stick.x - 1][gameData.stick.y] == "empty") {
-		$("#move-left").fadeIn(200);
-	} else {
-		if ($("#move-left").is(":visible")) {
-			$("#move-left").fadeOut(0);
-		}
-	}
-	if (gameData.stick.y < game[0].length - 2 && gameData.stick.y - gameData.view[3] == gameData.view[1] - 2) {
-		$("#move-down").fadeIn(200);
-	} else {
-		if ($("#move-down").is(":visible")) {
-			$("#move-down").fadeOut(0);
-		}
-	}
-	if (gameData.stick.y > 1 && gameData.stick.y - gameData.view[2] == 1 && game[gameData.stick.x][gameData.stick.y - 1] == "empty") {
-		$("#move-up").fadeIn(200);
-	} else {
-		if ($("#move-up").is(":visible")) {
-			$("#move-up").fadeOut(0);
-		}
 	}
 
 }
@@ -449,11 +408,11 @@ var gameData = {
 		x: 5,
 		y: 3,
 		jump: false,
-		shovel: 1,
+		shovel: 30,
 		score: 0,
 		money: 0
 	},
-	view: [10, 10, 1, 1],
+	view: [9, 9, 1, 1],
 	shop: [false, 0],
 	upgrades: {
 		shovel: [1, 5]
