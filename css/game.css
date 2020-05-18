@@ -93,6 +93,7 @@
 	text-align: center;
 	width: 10em;
 	z-index: 2;
+	border-radius: 5px;
 }
 
 #location {

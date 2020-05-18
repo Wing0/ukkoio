@@ -76,15 +76,17 @@ function initialise(width, height, stick) {
 }
 
 function gameOver() {
+	clearTimeout(deather)
 	gameData.alive = false;
 	$("#game").html("     ___________    <br>   / ___________\\        <br>  /  /<br> |  |                    _____       ___       ___   __________<br> |  |     _________     /     \\     |   \\    /   |  |   ______/   <br> |  |    /______  |    /  /_\\  \\    |    \\__/    |  |  |_______   <br> \\  \\          / /    /  _____  \\   |  |\\____/|  |  |   ______/ <br>  \\  \\________/ /    /  /     \\  \\  |  |      |  |  |  |_______  <br>   \\ __________/    /  /       \\  \\ |  |      |  |  |_________/  <br>       _________    <br>     /  _______  \\   <br>    /  /       \\  \\    <br>   |  |        |  |   __          ___    __________   ___   ____ <br>   |  |        |  |  \\  \\        /  /   |   ______/  |  | /  __|  <br>   |  |        |  |   \\  \\      /  /    |  |______   |  |  /      <br>   |  |        |  |    \\  \\    /  /     |   ______/  |   /  <br>    \\  \\______/  /      \\  \\__/  /      |  |         |  |   <br>     \\__________/        \\______/       |_________/  |__|      <br>".split(" ").join("&nbsp"));
-	$("#game").css({
+	$("#game").animate({
 		"background-color": "black",
 		"color": "white"
-	});
-	$("body").css({
-		"background-color": "black",
-	});
+	}, {easing: "linear", duration: 1000});
+
+	$("body").animate({
+		"background-color": "black"
+	}, {easing: "linear", duration: 1000});
 }
 
 function generateMap(width, height) {
@@ -203,7 +205,6 @@ function drawTile(v_x, v_y) {
 	if (v_x + gameData.view[2] < 0 || v_x + gameData.view[2] >= game.length || v_y + gameData.view[3] < 0 || v_y + gameData.view[3] >= game[0].length) {
 		$('#' + v_x + "-" + v_y).html(sprites["empty"].split(" ").join("&nbsp"))	
 	} else {
-		console.log("DRAWING:", game[v_x + gameData.view[2]][v_y + gameData.view[3]], v_x, v_y)
 		$('#' + v_x + "-" + v_y).html(sprites[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].split(" ").join("&nbsp"))	
 	}
 }
@@ -399,6 +400,9 @@ function validMoveStick(x, y, stick) {
 
 function moveStick(x, y, stick) {
 	// Perform the movement
+	if (y > 0) {
+		resetTimer()
+	}
 	stick.x += x;
 	stick.y += y;
 	updateUI()
@@ -552,10 +556,75 @@ function updateUI() {
 	}
 }
 
+function increaseTimer() {
+	// Death timer
+	var tick = 800;
+	gameData.moveTimer += 1;
+	if (gameData.moveTimer == gameData.moveTimerMax) {
+		gameOver();
+		return;
+	}
+	deather = setTimeout(increaseTimer, tick);
+
+	console.log("Timer:", gameData.moveTimer)
+
+
+	var color = 255;
+	if (gameData.moveTimer >= gameData.moveTimerThreshold) {
+		color = Math.round(255 - (gameData.moveTimer - gameData.moveTimerThreshold + 1) / (gameData.moveTimerMax - gameData.moveTimerThreshold) * 255);
+		if (gameData.moveTimer - gameData.moveTimerThreshold < 1) {
+			say("Better hurry!")	
+		}
+		
+
+		if (gameData.moveTimer > 1.5 * gameData.moveTimerThreshold) {
+			textColor = "white";
+		} else {
+			textColor = "black";
+		}
+
+
+		$("body").animate({
+			"background-color": "rgb(" + color + ", " + color + ", " + color + ")"
+		}, {easing: "linear", duration: tick});
+
+		$("#game-field").css({color: textColor})
+		$("#stick-container").css({color: textColor});
+	}
+	
+}
+
+function resetTimer(keep) {
+	// body...
+	if (! keep){
+		gameData.moveTimer = Math.round(0.3 * gameData.moveTimer);
+		clearTimeout(deather)
+		increaseTimer()
+	} else {
+		clearTimeout(deather)
+	}
+	color = Math.round(255 - (gameData.moveTimer - gameData.moveTimerThreshold + 1) / (gameData.moveTimerMax - gameData.moveTimerThreshold) * 255);
+
+	if (gameData.moveTimer > gameData.moveTimerThreshold + 3) {
+		textColor = "white";
+	} else {
+		textColor = "black";
+	}
+
+	$("body").animate({
+		"background-color": "rgb(" + color + ", " + color + ", " + color + ")"
+	}, {easing: "linear", duration: 500});
+
+	$("#game-field").css({color: textColor});
+	$("#stick-container").css({color: textColor});
+}
+
 function toggleShop() {
 	// body...
 	if ($("#game-field-wrapper").is(":visible")) {
 		$("#stick-container").fadeOut(200);
+		resetTimer(true);
+		$("body").css({"background-color": "white"});
 		$("#game-field-wrapper").fadeOut(200, function(){
 			$("#game-store").fadeIn();
 			updateShop();
@@ -568,10 +637,10 @@ function toggleShop() {
 			$("#stick-container").fadeIn(200);
 			drawMap()
 			drawStick(gameData.stick);
+			increaseTimer()
 		});
 		gameData.shop[0] = false;
 	}
-	
 }
 
 function updateShop() {
@@ -663,26 +732,27 @@ function useSkill(btn) {
 	} else {
 		var shift = 1;
 	}
+	if (gameData.stick.bombs > 0){
+		var out = false;
+		var x = 0;
+		var y = 0;
 
-	var out = false;
-	var x = 0;
-	var y = 0;
+		if (game[gameData.stick.x + shift][gameData.stick.y] != "empty") {
+			say("Cannot put it there...", "warning");
+			return
+		}
 
-	if (game[gameData.stick.x + shift][gameData.stick.y] != "empty") {
-		say("Cannot put it there...", "warning");
-		return
+		out = dropCoordinates(gameData.stick.x + shift, gameData.stick.y)
+		x = out[0]
+		y = out[1]
+
+		game[x][y] = "bomb";
+		gameData.stick.bombs -= 1;
+		drawAbsoluteTile(x, y)
+		bto = setTimeout(function(){
+			explosion(x, y, 2)
+		}, 3000);
 	}
-
-	out = dropCoordinates(gameData.stick.x + shift, gameData.stick.y)
-	x = out[0]
-	y = out[1]
-
-	game[x][y] = "bomb";
-	gameData.stick.bombs -= 1;
-	drawAbsoluteTile(x, y)
-	bto = setTimeout(function(){
-		explosion(x, y, 2)
-	}, 3000);
 }
 
 function dropCoordinates(x, y) {
@@ -873,22 +943,22 @@ var gameData = {
 	},
 	last_move: [0, 0],
 	alive: true,
+	moveTimer: 0,
+	moveTimerMax: 20,
+	moveTimerThreshold: 10
 }
 
 game = generateMap(20, 150);
 initialise(gameData.view[0], gameData.view[1], gameData.stick);
 var dto = false;
 var bto = false;
+var deather = false;
 console.log(game)
 drawMap(gameData.view);
 updateUI()
 drawStick(gameData.stick);
 environmentCheckStick(gameData.stick)
-say("Where am I? What is this place?")	
-setTimeout(function() {
-	say("Why do I feel so... sticky?");
-	setTimeout(function() {say("(˵ ͡° ͜ʖ ͡°˵)")}, 4000);
-}, 8000)
+say("Where am I? What is this place?")
 
  
 
