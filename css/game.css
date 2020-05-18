@@ -51,4 +51,5 @@
 #message {
 	text-align: center;
 	width: 10em;
+	z-index: 2;
 }

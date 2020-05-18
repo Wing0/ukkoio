@@ -11,6 +11,8 @@ function initialise(width, height, stick) {
 
 		$("#game-overlay").append($('<dif id="stick-container" style="top:0; left:0;"></div>'));
 		$("#stick-container").append($('<dif id="stick"></div>'));
+		$("#stick-container").append($('<dif id="message" style="display: none; position: absolute; bottom:110%; left:-2.5em;"></div>'));
+
 	}
 
 
@@ -429,7 +431,7 @@ var gameData = {
 		x: 5,
 		y: 3,
 		jump: false,
-		shovel: 30,
+		shovel: 1,
 		score: 0,
 		money: 0
 	},
