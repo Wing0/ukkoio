@@ -268,6 +268,10 @@ function validMoveStick(x, y, stick) {
 					}, moveDuration, function(){
 						$("#game-field").css({left: -distance + "px"});
 					})
+
+					tto = setTimeout(function(){
+
+					}, moveDuration)
 				} 
 				if (x > 0) {
 					$("#game-field").animate({
@@ -352,12 +356,7 @@ function selectMove(x, y, stick) {
 
 	if (gameData.last_move[0] != 0 || gameData.last_move[1] != 0) {
 		if (dto) {
-			if (gameData.last_move[0] != x || gameData.last_move[1] != y) {
-				clearTimeout(dto);	
-				dto = false;
-			} else {
-				return;
-			}
+			return;
 		}
 	}
 	
@@ -542,7 +541,7 @@ var gameData = {
 		"gold-one": {
 			distribute: true,
 			b: 3,
-			p: 15,
+			p: 18,
 			e: 40,
 			s: 5,
 			m: 1,
@@ -600,7 +599,7 @@ var gameData = {
 		jump: false,
 		shovel: 1,
 		score: 0,
-		money: 200,
+		money: 0,
 		health: 100,
 		max_health: 100,
 		pose: "stick-basic",
