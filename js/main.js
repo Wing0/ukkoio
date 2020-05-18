@@ -1,6 +1,6 @@
 function initialise(width, height, stick) {
 	// Creating the viewport elements
-	$("#game-field").html();
+	$("#game-field").html("");
 	for (var y = 0; y < height; y++) {
 		var row = $('<div class="row" id="' + y + '"></div>');
 		for (var x = 0; x < width; x++) {
@@ -275,6 +275,8 @@ function toggleShop() {
 		$("#game-store").fadeOut(200, function(){
 			$("#game-field").fadeIn();	
 			$("#stick-container").fadeIn(200);
+			drawMap()
+			drawStick(gameData.stick);
 		});
 		gameData.shop[0] = false;
 	}
@@ -284,6 +286,7 @@ function toggleShop() {
 function updateShop() {
 	// body...
 	$("#store-shovel>.price").html(Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]));
+	$("#store-sight>.price").html(gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0]);
 	updateUI();
 }
 
@@ -299,7 +302,8 @@ function selectItem(direction) {
 
 
 function buyItem() {
-	if (gameData.shop[1] == 0) {
+	switch (gameData.shop[1]) {
+		case 0:
 		var cost = Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]);
 		if (gameData.stick.money >= cost) {
 			gameData.upgrades.shovel[0] += 1;
@@ -311,7 +315,24 @@ function buyItem() {
 				$(".chosen").removeClass("chosen");
 			}, 1500)
 		}
+		
+		case 1:
+		var cost = gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0];
+		if (gameData.stick.money >= cost) {
+			gameData.upgrades.sight[0] += 1;
+			gameData.stick.money -= cost;
+			gameData.view[0] += gameData.upgrades.sight[1][gameData.upgrades.sight[0]][1];
+			gameData.view[1] += gameData.upgrades.sight[1][gameData.upgrades.sight[0]][2];
+			$(".selector:eq("+gameData.shop[1]+")").addClass("chosen");
+			updateShop();
+			initialise(gameData.view[0], gameData.view[1], gameData.stick)
+			setTimeout(function(){
+				$(".chosen").removeClass("chosen");
+			}, 1500)
+		}
 	}
+
+	
 }
 
 function say(message, level) {
@@ -412,10 +433,22 @@ var gameData = {
 		score: 0,
 		money: 0
 	},
-	view: [9, 9, 1, 1],
+	view: [5, 5, 1, 1],
 	shop: [false, 0],
 	upgrades: {
-		shovel: [1, 5]
+		shovel: [1, 5], // Current level, starting cost
+		sight: [
+			0, [ // Level
+				[0, 0, 0],
+				[10, 1, 0], // cost, x improvement, y improvement
+				[20, 0, 1],
+				[40, 1, 0],
+				[100, 1, 1],
+				[200, 0, 1],
+				[400, 1, 0],
+				[1000, 1, 1]
+			]
+		]
 	}
 }
 

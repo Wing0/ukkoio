@@ -12,10 +12,16 @@
 	border-style: dotted;
 	border-color: black;
 	border-width: 1px;
+	display: inline-block;
 }
 
 #game-store {
 	display: none;
+}
+
+
+#game .row {
+	position: static;
 }
 
 #game .tile {
