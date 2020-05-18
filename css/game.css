@@ -8,11 +8,13 @@
     transform: translate(-50%, -50%);
 }
 
-#game-field {
+#game-field-container {
 	border-style: dotted;
 	border-color: black;
 	border-width: 1px;
 	display: inline-block;
+	position: relative;
+	overflow: hidden;
 }
 
 #game-store {
@@ -41,6 +43,10 @@
 #game .selector.chosen {
 	color: green !important;
 	font-weight: bold;
+}
+
+#game-field {
+	position: relative;
 }
 
 #game-stick {

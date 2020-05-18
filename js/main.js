@@ -129,10 +129,7 @@ function drawTile(v_x, v_y) {
 
 function drawStick(stick, pose) {
 	// Drawing the adventurer over the map in its own container
-	if (!pose) {
-		pose = "stick-basic";
-	}
-	$("#stick").html(sprites[pose].split(" ").join("&nbsp"));
+	$("#stick").html(sprites[gameData.stick.pose].split(" ").join("&nbsp"));
 	var x = stick.x - gameData.view[2];
 	var y = stick.y - gameData.view[3];
 	var pos = $('#' + x + "-" + y).position();
@@ -159,8 +156,37 @@ function validMoveStick(x, y, stick) {
 					return;
 				}
 			}
-			moveStick(x, y, stick)
-			environmentCheckStick(stick)
+			var moveDuration = 1000 / gameData.stick.shoes;
+			gameData.last_move = [x, y];
+			if (x > 0) {
+				gameData.stick.pose = "stick-right";	
+			}
+
+			if (x < 0) {
+				gameData.stick.pose = "stick-left";	
+			}
+
+			drawStick(stick);
+			dto = setTimeout(function(){
+				gameData.last_move = [0, 0]
+				gameData.stick.pose = "stick-basic";
+				moveStick(x, y, stick)
+				drawStick(stick)
+				updateUI()
+				environmentCheckStick(stick);
+			}, moveDuration);
+
+			var distance = "";
+			if (x < 0) {
+				distance = "-" +$("#0-0").css("width")
+			} else {
+				distance = $("#0-0").css("width")
+			}
+			$("#game-field").animate({
+				right: distance
+			}, moveDuration, function(){
+				$("#game-field").css({right: 0});
+			})
 		}
 	}
 }
@@ -179,16 +205,20 @@ function dig(x, y, stick) {
 	switch (tileType) {
 		default:
 			if (x > 0) {
-				drawStick(stick, "stick-dig-right");
+				gameData.stick.pose = "stick-dig-right";
+				drawStick(stick);
 			}
 			if (y > 0) {
-				drawStick(stick, "stick-dig-down");
+				gameData.stick.pose = "stick-dig-down";
+				drawStick(stick);
 			}
 			if (x < 0) {
-				drawStick(stick, "stick-dig-left");
+				gameData.stick.pose = "stick-dig-left";
+				drawStick(stick);
 			}
 			if (y < 0) {
-				drawStick(stick, "stick-dig-up");
+				gameData.stick.pose = "stick-dig-up";
+				drawStick(stick);
 			}
 			gameData.last_move = [x, y];
 			dto = setTimeout(function(){
@@ -202,6 +232,7 @@ function dig(x, y, stick) {
 				var v_x = stick.x - gameData.view[2] + x;
 				var v_y = stick.y - gameData.view[3] + y;
 				drawTile(v_x, v_y)
+				gameData.stick.pose = "stick-basic";
 				drawStick(stick)
 				updateUI()
 				environmentCheckStick(stick);
@@ -241,6 +272,8 @@ function selectMove(x, y, stick) {
 	}
 	
 	if (game[stick.x + x][stick.y + y] == "empty") {
+		if (x > 0) {
+		}
 		validMoveStick(x, y, stick);
 	} else {
 		dig(x, y, stick);
@@ -288,9 +321,9 @@ function updateUI() {
 
 function toggleShop() {
 	// body...
-	if ($("#game-field").is(":visible")) {
+	if ($("#game-field-container").is(":visible")) {
 		$("#stick-container").fadeOut(200);
-		$("#game-field").fadeOut(200, function(){
+		$("#game-field-container").fadeOut(200, function(){
 			$("#game-store").fadeIn();
 			updateShop();
 			gameData.shop[0] = true;
@@ -298,7 +331,7 @@ function toggleShop() {
 		
 	} else {	
 		$("#game-store").fadeOut(200, function(){
-			$("#game-field").fadeIn();	
+			$("#game-field-container").fadeIn();	
 			$("#stick-container").fadeIn(200);
 			drawMap()
 			drawStick(gameData.stick);
@@ -458,7 +491,9 @@ var gameData = {
 		score: 0,
 		money: 0,
 		health: 100,
-		max_health: 100
+		max_health: 100,
+		pose: "stick-basic",
+		shoes: 1
 	},
 	view: [5, 5, 1, 1],
 	shop: [false, 0],
