@@ -1,11 +1,48 @@
-#game {
-	font-family: "Courier New", Courier, monospace;
-	display: inline-block;
+#game-over {
+	display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+    color: white;
+}
+
+#game-wrapper {
+	font-family: "Courier New", Courier, monospace;
+	position: absolute;
+	top:0;
+	right:0;
+	left:0;
+	bottom:0;
+}
+#game-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#help {
+	display: none;
+	position: absolute;
+	top:100%;
+	left: -50%;
+	width: 200%;
+	text-align: center;
+}
+
+#game {
+	display: none;
+}
+
+#start {
+    text-align: center;
+}
+
+#start .selected {
+	font-weight: bold;
 }
 
 #game-field-container {
@@ -104,4 +141,9 @@
 	text-align: center;
 	font-size: 2em;
 	margin-top: 2em;	
+}
+
+#return-to-menu {
+	text-align: center;
+	font-size: 1.5em;	
 }
