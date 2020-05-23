@@ -13,7 +13,7 @@ function initialise(width, height, stick) {
 		$("#stick-container").append($('<dif id="stick"></div>'));
 		$("#stick-container").append($('<dif id="message" style="display: none; position: absolute; bottom:110%; left:-2.5em;"></div>'));
 		$("#stick-container").append($('<dif id="move-down" class="arrow" style="display: none; position: absolute; top:90%; right:40%; transform: rotate(90deg);">➔</div>'));
-		$("#stick-container").append($('<dif id="move-timer"  style="display: none; color: white; border-radius: 30px; padding: 0 5px 0 5px; position: absolute; top:105%; right:65%;"><span id="timer-display" style="background-color: none;">3</span></div>'));
+		$("#stick-container").append($('<dif id="move-timer"  style="display: none; color: white; background-color: black; border-radius: 30px; padding: 0 5px 0 5px; position: absolute; top:105%; right:65%;"><span id="timer-display" style="background-color: black;">3</span></div>'));
 
 	}
 }
@@ -138,9 +138,9 @@ function gameOver() {
 	$("#game-over").fadeIn();
 	$("#game-wrapper").animate({
 		"background-color": "black"
-	}, {easing: "linear", duration: 1000});
+	}, {easing: "linear", duration: 2000});
 	$("#game-over").append('<div id="end-score">Your score: ' + gameData.stick.score + " in " + gameData.gameMode + " mode</div>")
-	$("#game-over").append('<div id="return-to-menu">Press &lt;TAB&gt; or &lt;SPACE&gt; to return to main menu</div>')
+	$("#game-over").append('<div id="return-to-menu">Press &lt;SPACE&gt; to return to main menu</div>')
 }
 
 function generateMap(width, height) {
@@ -260,8 +260,15 @@ function drawTile(v_x, v_y) {
 	// Draw the tile on the map to update, or re-draw
 	if (v_x + gameData.view[2] < 0 || v_x + gameData.view[2] >= game.length || v_y + gameData.view[3] < 0 || v_y + gameData.view[3] >= game[0].length) {
 		$('#' + v_x + "-" + v_y).html(sprites["empty"].split(" ").join("&nbsp"))	
-	} else {
+	} else { 
 		$('#' + v_x + "-" + v_y).html(sprites[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].split(" ").join("&nbsp"))	
+		// Set the right color
+		if (gameData.tiles[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].c) {
+			$('#' + v_x + "-" + v_y).css({"color": gameData.tiles[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].c})
+		} else {
+			$('#' + v_x + "-" + v_y).css({"color": "black"})
+		}
+		
 	}
 }
 
@@ -638,7 +645,7 @@ function doDamage(dmg) {
 		say("¯\_(ツ)_/¯");
 	}
 	
-	if (gameData.stick.health <= 0) {
+	if (gameData.stick.health <= 0 && gameData.alive) {
 		resetTimer(true);
 		gameOver();
 	}
@@ -706,13 +713,11 @@ function increaseTimer() {
 			say("Hurry down!")	
 			$("#move-down").fadeIn()
 			$("#move-timer").fadeIn()
+		} else {
+			$("#move-down").show()
+			$("#move-timer").show()
 		}
 		$("#timer-display").html(gameData.moveTimerMax - gameData.moveTimer - 1)
-
-
-		$("#move-timer").animate({
-			"background-color": "rgb(" + color + ", " + color + ", " + color + ")"
-		}, {easing: "linear", duration: tick});
 	}
 	
 }
@@ -720,11 +725,15 @@ function increaseTimer() {
 function resetTimer(keep) {
 	// body...
 	if (! keep){
-		gameData.moveTimer = Math.round(0.3 * gameData.moveTimer);
+		var multiplier = 0.3 + 0.8 * gameData.stick.score / (3000 + gameData.stick.score);
+		console.log("multiplier:", multiplier)
+		gameData.moveTimer = Math.round(multiplier * gameData.moveTimer);
 		clearTimeout(deather)
 		increaseTimer()
-		$("#move-down").hide()
-		$("#move-timer").css({"background-color": "white", "display": "none"})
+		if (gameData.moveTimer < gameData.moveTimerThreshold) {
+			$("#move-down").hide()
+			$("#move-timer").hide()	
+		}
 	} else {
 		clearTimeout(deather)
 	}
