@@ -138,7 +138,7 @@ function gameOver() {
 	$("#game-over").fadeIn();
 	$("#game-wrapper").animate({
 		"background-color": "black"
-	}, {easing: "linear", duration: 1000});
+	}, {easing: "linear", duration: 2000});
 	$("#game-over").append('<div id="end-score">Your score: ' + gameData.stick.score + " in " + gameData.gameMode + " mode</div>")
 	$("#game-over").append('<div id="return-to-menu">Press &lt;SPACE&gt; to return to main menu</div>')
 }
@@ -569,7 +569,7 @@ function doDamage(dmg) {
 		say("¯\_(ツ)_/¯");
 	}
 	
-	if (gameData.stick.health <= 0) {
+	if (gameData.stick.health <= 0 && gameData.alive) {
 		resetTimer(true);
 		gameOver();
 	}
@@ -655,7 +655,6 @@ function resetTimer(keep) {
 		clearTimeout(deather)
 		increaseTimer()
 		if (gameData.moveTimer < gameData.moveTimerThreshold) {
-			console.log("Yes, it is!")
 			$("#move-down").hide()
 			$("#move-timer").hide()	
 		}
