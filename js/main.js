@@ -128,6 +128,7 @@ function bindKeys() {
 
 function gameOver() {
 	clearTimeout(deather)
+	resetTimer(true);
 	gameData.alive = false;
 	gameData.mode = "over";
 	$("#game-container").fadeOut();
@@ -562,6 +563,7 @@ function doDamage(dmg) {
 	}
 	
 	if (gameData.stick.health <= 0) {
+		resetTimer(true);
 		gameOver();
 	}
 }
