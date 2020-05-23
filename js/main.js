@@ -257,8 +257,15 @@ function drawTile(v_x, v_y) {
 	// Draw the tile on the map to update, or re-draw
 	if (v_x + gameData.view[2] < 0 || v_x + gameData.view[2] >= game.length || v_y + gameData.view[3] < 0 || v_y + gameData.view[3] >= game[0].length) {
 		$('#' + v_x + "-" + v_y).html(sprites["empty"].split(" ").join("&nbsp"))	
-	} else {
+	} else { 
 		$('#' + v_x + "-" + v_y).html(sprites[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].split(" ").join("&nbsp"))	
+		// Set the right color
+		if (gameData.tiles[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].c) {
+			$('#' + v_x + "-" + v_y).css({"color": gameData.tiles[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].c})
+		} else {
+			$('#' + v_x + "-" + v_y).css({"color": "black"})
+		}
+		
 	}
 }
 
