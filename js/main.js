@@ -130,9 +130,9 @@ function bindKeys() {
 }
 
 function gameOver() {
+	gameData.alive = false;
 	clearTimeout(deather)
 	resetTimer(true);
-	gameData.alive = false;
 	gameData.mode = "over";
 	$("#game-container").fadeOut();
 	$("#game-over").fadeIn();
@@ -697,7 +697,7 @@ function increaseTimer() {
 	}
 	var tick = 1000;
 	gameData.moveTimer += 1;
-	if (gameData.moveTimer == gameData.moveTimerMax) {
+	if (gameData.moveTimer == gameData.moveTimerMax && gameData.alive) {
 		gameOver();
 		return;
 	}
