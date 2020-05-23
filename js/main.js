@@ -160,9 +160,10 @@ function generateMap(width, height) {
 		["hard-five", 80, 0, 100, 'filler'],
 		["hard-ten", 50, 20, 100, 'linear'],
         ["chest", 5, 0.3, 100, 'uniform'],
-        ["monster-base", 40, 0.8, 100, 'uniform'],
-        ["monster-base", 90, 8, 150, 'linear'],
-		["gold-five", 100, 4, 150, 'uniform'],
+        ["worm-base", 40, 0.8, 100, 'uniform'],
+        ["worm-base", 90, 5, 150, 'linear'],
+        ["worm-vertical-base", 120, 8, 180, 'linear'],
+		["gold-five", 120, 5, 150, 'uniform'],
 		["hard-ten", 100, 0, 150, 'filler'],
 		["empty", 90, 20, 150, 'uniform'],
         ["chest-2", 90, 0.4, 150, 'uniform'],
@@ -344,29 +345,60 @@ function environmentCheckStick(stick) {
 	}
 
 	// Monster check
+
+	// Horizontal worm
 	for (var i = -3; i <= 3; i++) {
-		if (stick.x + i >= 0 && stick.x + i < game.length && game[stick.x + i][stick.y] == "monster-base") {
+		if (stick.x + i >= 0 && stick.x + i < game.length && game[stick.x + i][stick.y] == "worm-base") {
 			switch (i) {
 				
 				case 1:
 				case -1:
 				doDamage(40);
-				game[stick.x + i][stick.y] = "monster-head-used";
+				game[stick.x + i][stick.y] = "worm-head-used";
 				break;
 
 				case 2:
 				case -2:
 				doDamage(20);
-				game[stick.x + i][stick.y] = "monster-base-used";
-				game[stick.x + i/2][stick.y] = "monster-head";
+				game[stick.x + i][stick.y] = "worm-base-used";
+				game[stick.x + i/2][stick.y] = "worm-head";
 				break;
 
 				case 3:
 				case -3:
 				doDamage(10);
-				game[stick.x + i][stick.y] = "monster-base-used";
-				game[stick.x + i - i/3][stick.y] = "monster-body";
-				game[stick.x + i/3][stick.y] = "monster-head";
+				game[stick.x + i][stick.y] = "worm-base-used";
+				game[stick.x + i - i/3][stick.y] = "worm-body";
+				game[stick.x + i/3][stick.y] = "worm-head";
+				break;
+			}
+		}
+	}
+
+	// Vertical worm
+	for (var i = -3; i <= 3; i++) {
+		if (stick.y + i >= 0 && stick.y + i < game[0].length && game[stick.x][stick.y + i] == "worm-vertical-base") {
+			switch (i) {
+				
+				case 1:
+				case -1:
+				doDamage(50);
+				game[stick.x][stick.y + i] = "worm-vertical-head-used";
+				break;
+
+				case 2:
+				case -2:
+				doDamage(30);
+				game[stick.x][stick.y + i] = "worm-vertical-base-used";
+				game[stick.x][stick.y + i/2] = "worm-vertical-head";
+				break;
+
+				case 3:
+				case -3:
+				doDamage(25);
+				game[stick.x][stick.y + i] = "worm-vertical-base-used";
+				game[stick.x][stick.y + i - i/3] = "worm-vertical-body";
+				game[stick.x][stick.y + i/3] = "worm-vertical-head";
 				break;
 			}
 		}
@@ -952,27 +984,52 @@ function startGame(mode) {
 	            m: 20,
 	            h: 5
 	        },
-	        "monster-base": {
-	            s: 200,
-	            m: 50,
-	            h: 10
-	        },
-	        "monster-base-used": {
+	        "worm-base": {
 	            s: 100,
-	            m: 20,
+	            m: 25,
 	            h: 5
 	        },
-	        "monster-body": {
+	        "worm-base-used": {
+	            s: 50,
+	            m: 15,
+	            h: 3
+	        },
+	        "worm-body": {
 	            s: 1,
 	            m: 0,
 	            h: 2
 	        },
-	        "monster-head": {
+	        "worm-head": {
 	            s: 5,
 	            m: 0,
 	            h: 3
 	        },
-	        "monster-head-used": {
+	        "worm-head-used": {
+	            s: 50,
+	            m: 15,
+	            h: 3
+	        },
+	        "worm-vertical-base": {
+	            s: 200,
+	            m: 50,
+	            h: 10
+	        },
+	        "worm-vertical-base-used": {
+	            s: 100,
+	            m: 20,
+	            h: 5
+	        },
+	        "worm-vertical-body": {
+	            s: 1,
+	            m: 0,
+	            h: 2
+	        },
+	        "worm-vertical-head": {
+	            s: 5,
+	            m: 0,
+	            h: 3
+	        },
+	        "worm-vertical-head-used": {
 	            s: 100,
 	            m: 20,
 	            h: 5
