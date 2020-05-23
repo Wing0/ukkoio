@@ -740,8 +740,12 @@ function chooseItem() {
 				$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");
 				updateShop();
 				initialise(gameData.view[0], gameData.view[1], gameData.stick)
+
+				// Fixing a bug where the right side of the field is treated differently
 				if (gameData.upgrades.sight[0] % 2 == 1) {
-					gameData.view[2] -= 1
+					if (gameData.view[2] + gameData.view[0] >= game.length) {
+						gameData.view[2] -= 1
+					}
 				}
 				drawMap();
 				setTimeout(function(){
