@@ -480,15 +480,16 @@ function validMoveStick(x, y, stick) {
 			// Calculate animation
 
 			var distance = parseInt($("#0-0").css("width"), 10)
-			if (gameData.view[0] % 2) {
-				var x_offset = Math.round(gameData.view[0]/2) - 1;
+			if (gameData.view[0] % 2 == 1) {
+				var x_offset = Math.round((gameData.view[0] - 1 ) / 2);
 			} else {
-				var x_offset = Math.round(gameData.view[0] / 2);
+				var x_offset = Math.round(gameData.view[0] / 2) - 1;
 			}
-			var y_offset = Math.round(gameData.view[1]/2) - 1;
+
+			var y_offset = Math.round(gameData.view[1] / 2) - 1;
 
 			// If the stick is close to the edge, move that instead of the level
-			if (stick.x < x_offset + 1 && x < 0 || stick.x < x_offset && x > 0 || stick.x > game.length - x_offset - 2 && x > 0 || stick.x > game.length - x_offset - 1 && x < 0) {
+			if (stick.x <= x_offset && x < 0 || stick.x < x_offset && x > 0 || stick.x > game.length - (gameData.view[0] - x_offset) - 1 && x > 0 || stick.x > game.length - (gameData.view[0] - x_offset) && x < 0) {
 				if (x < 0) {
 					$("#stick-container").animate({
 						left: $("#stick-container").position().left - distance + "px",
@@ -828,6 +829,7 @@ function chooseItem() {
 						gameData.view[2] -= 1
 					}
 				}
+
 				drawMap();
 				setTimeout(function(){
 					$("#game-shop .chosen").removeClass("chosen");
