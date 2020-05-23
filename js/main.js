@@ -406,11 +406,15 @@ function validMoveStick(x, y, stick) {
 			// Calculate animation
 
 			var distance = parseInt($("#0-0").css("width"), 10)
-			var x_offset = Math.round(gameData.view[0]/2) - 1;
+			if (gameData.view[0] % 2) {
+				var x_offset = Math.round(gameData.view[0]/2) - 1;
+			} else {
+				var x_offset = Math.round(gameData.view[0] / 2);
+			}
 			var y_offset = Math.round(gameData.view[1]/2) - 1;
 
 			// If the stick is close to the edge, move that instead of the level
-			if (stick.x < x_offset + 1 && x < 0 || stick.x < x_offset && x > 0 || stick.x > game.length - x_offset - 2 && x > 0 || stick.x > game.length - x_offset -1 && x < 0) {
+			if (stick.x < x_offset + 1 && x < 0 || stick.x < x_offset && x > 0 || stick.x > game.length - x_offset - 2 && x > 0 || stick.x > game.length - x_offset - 1 && x < 0) {
 				if (x < 0) {
 					$("#stick-container").animate({
 						left: $("#stick-container").position().left - distance + "px",
@@ -578,7 +582,11 @@ function updateUI() {
 	$("#location-display").html("(" + gameData.stick.x + ", " + gameData.stick.y + ")");
 
 	// Level transition
-	var x_offset = Math.round(gameData.view[0]/2) - 1;
+	if (gameData.view[0] % 2) {
+		var x_offset = Math.round(gameData.view[0]/2) - 1;
+	} else {
+		var x_offset = Math.round(gameData.view[0] / 2) - 1;
+	}
 	var y_offset = Math.round(gameData.view[1]/2) - 1;
 	var step = 0;
 	if (gameData.stick.x > x_offset - 1 && gameData.stick.x < game.length - x_offset && gameData.stick.x - gameData.view[2] != x_offset) {
