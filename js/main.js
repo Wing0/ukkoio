@@ -581,12 +581,8 @@ function updateUI() {
 	$("#bomb .indicator").html(gameData.stick.bombs);
 	$("#location-display").html("(" + gameData.stick.x + ", " + gameData.stick.y + ")");
 
-	// Level transition
-	if (gameData.view[0] % 2) {
-		var x_offset = Math.round(gameData.view[0]/2) - 1;
-	} else {
-		var x_offset = Math.round(gameData.view[0] / 2) - 1;
-	}
+	// Level transition when not close to the edge
+	var x_offset = Math.round(gameData.view[0]/2) - 1;
 	var y_offset = Math.round(gameData.view[1]/2) - 1;
 	var step = 0;
 	if (gameData.stick.x > x_offset - 1 && gameData.stick.x < game.length - x_offset && gameData.stick.x - gameData.view[2] != x_offset) {
@@ -595,7 +591,7 @@ function updateUI() {
 		drawMap()
 		drawStick(gameData.stick)
 	}
-	if (gameData.stick.y > y_offset && gameData.stick.y < game[0].length - y_offset && gameData.stick.y - gameData.view[3] != y_offset) {
+	if (gameData.stick.y > y_offset - 1 && gameData.stick.y < game[0].length - y_offset && gameData.stick.y - gameData.view[3] != y_offset) {
 		step = (gameData.stick.y - y_offset) - gameData.view[3];
 		gameData.view[3] = Math.min(game[0].length - gameData.view[1], gameData.view[3] + step);
 		drawMap()
@@ -744,6 +740,10 @@ function chooseItem() {
 				$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");
 				updateShop();
 				initialise(gameData.view[0], gameData.view[1], gameData.stick)
+				if (gameData.upgrades.sight[0] % 2 == 1) {
+					gameData.view[2] -= 1
+				}
+				drawMap();
 				setTimeout(function(){
 					$("#game-shop .chosen").removeClass("chosen");
 				}, 1500)
