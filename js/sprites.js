@@ -35,6 +35,10 @@ var sprites = {
 		"{|||||}<br>"+
 		"{|||||}<br>"+
 		"{|||||}",
+	"solid":
+		"{#####}<br>"+
+		"{#####}<br>"+
+		"{#####}",
 	"stick-basic":
 		"   O   <br>"+
 		"  /|\\  <br>"+
@@ -92,6 +96,26 @@ var sprites = {
 		"( ಠvಠ )<br>"+
 		" `---` ",
 	"worm-body":
+		" _---_ <br>"+
+		"       <br>"+
+		" `---` ",
+	"worm-base-hard":
+		" _---_ <br>"+
+		"( ಠvಠ )<br>"+
+		" `---` ",
+	"worm-base-used-hard":
+		" _---_ <br>"+
+		"(  0  )<br>"+
+		" `---` ",
+	"worm-head-hard":
+		" _---_ <br>"+
+		"( ಠvಠ )<br>"+
+		" `---` ",
+	"worm-head-used-hard":
+		" _---_ <br>"+
+		"( ಠvಠ )<br>"+
+		" `---` ",
+	"worm-body-hard":
 		" _---_ <br>"+
 		"       <br>"+
 		" `---` ",

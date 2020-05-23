@@ -164,9 +164,12 @@ function generateMap(width, height) {
         ["worm-base", 90, 5, 150, 'linear'],
         ["worm-vertical-base", 120, 8, 180, 'linear'],
 		["gold-five", 120, 5, 150, 'uniform'],
-		["hard-ten", 100, 0, 150, 'filler'],
+		["hard-ten", 100, 0, 200, 'filler'],
 		["empty", 90, 20, 150, 'uniform'],
-        ["chest-2", 90, 0.4, 150, 'uniform'],
+        ["chest-2", 90, 0.4, 200, 'uniform'],
+		["empty", 150, 40, 200, 'linear'],
+		["solid", 150, 10, 200, 'linear'],
+        ["worm-base-hard", 140, 4, 200, 'uniform'],
 	]
 	
 	// Fill the map with empty tiles
@@ -370,6 +373,35 @@ function environmentCheckStick(stick) {
 				game[stick.x + i][stick.y] = "worm-base-used";
 				game[stick.x + i - i/3][stick.y] = "worm-body";
 				game[stick.x + i/3][stick.y] = "worm-head";
+				break;
+			}
+		}
+	}
+
+	// Horizontal hard worm
+	for (var i = -3; i <= 3; i++) {
+		if (stick.x + i >= 0 && stick.x + i < game.length && game[stick.x + i][stick.y] == "worm-base-hard") {
+			switch (i) {
+				
+				case 1:
+				case -1:
+				doDamage(100);
+				game[stick.x + i][stick.y] = "worm-head-used-hard";
+				break;
+
+				case 2:
+				case -2:
+				doDamage(60);
+				game[stick.x + i][stick.y] = "worm-base-used-hard";
+				game[stick.x + i/2][stick.y] = "worm-head-hard";
+				break;
+
+				case 3:
+				case -3:
+				doDamage(30);
+				game[stick.x + i][stick.y] = "worm-base-used-hard";
+				game[stick.x + i - i/3][stick.y] = "worm-body-hard";
+				game[stick.x + i/3][stick.y] = "worm-head-hard";
 				break;
 			}
 		}
@@ -580,12 +612,17 @@ function selectMove(x, y, stick) {
 		}
 	}
 	
-	if (game[stick.x + x][stick.y + y] == "empty") {
-		if (x > 0) {
-		}
+	switch (game[stick.x + x][stick.y + y]) {
+		case "empty":
 		validMoveStick(x, y, stick);
-	} else {
-		dig(x, y, stick);
+		break;
+
+		case "solid":
+		say("That's too hard to dig...");
+		break;
+
+		default:
+		dig(x, y, stick);		
 	}
 }
 
@@ -934,6 +971,12 @@ function startGame(mode) {
 	gameData = {
 		// Data for the distribution of each tile
 		tiles: {
+
+			"empty": {
+				s: 0,
+				m: 0,
+				h: 0
+			},
 			"basic": {
 				s: 1,
 				m: 0,
@@ -1004,10 +1047,34 @@ function startGame(mode) {
 	            m: 0,
 	            h: 3
 	        },
+	        "worm-base-hard": {
+	            s: 300,
+	            m: 60,
+	            h: 10,
+	            c: "red"
+	        },
+	        "worm-base-used-hard": {
+	            s: 150,
+	            m: 30,
+	            h: 7,
+	            c: "red"
+	        },
+	        "worm-body-hard": {
+	            s: 1,
+	            m: 0,
+	            h: 2,
+	            c: "red"
+	        },
+	        "worm-head-hard": {
+	            s: 5,
+	            m: 0,
+	            h: 3,
+	            c: "red"
+	        },
 	        "worm-head-used": {
-	            s: 50,
-	            m: 15,
-	            h: 3
+	            s: 150,
+	            m: 30,
+	            h: 7
 	        },
 	        "worm-vertical-base": {
 	            s: 200,
@@ -1033,6 +1100,11 @@ function startGame(mode) {
 	            s: 100,
 	            m: 20,
 	            h: 5
+	        },
+	        "solid": {
+	            s: 0,
+	            m: 0,
+	            h: 0
 	        },
 	        "bomb": {
 	            s: 0,
@@ -1097,7 +1169,7 @@ function startGame(mode) {
 	$("#game-over").html("     ___________    <br>   / ___________\\        <br>  /  /<br> |  |                    _____       ___       ___   __________<br> |  |     _________     /     \\     |   \\    /   |  |   ______/   <br> |  |    /______  |    /  /_\\  \\    |    \\__/    |  |  |_______   <br> \\  \\          / /    /  _____  \\   |  |\\____/|  |  |   ______/ <br>  \\  \\________/ /    /  /     \\  \\  |  |      |  |  |  |_______  <br>   \\ __________/    /  /       \\  \\ |  |      |  |  |_________/  <br>       _________    <br>     /  _______  \\   <br>    /  /       \\  \\    <br>   |  |        |  |   __          ___    __________   ___   ____ <br>   |  |        |  |  \\  \\        /  /   |   ______/  |  | /  __|  <br>   |  |        |  |   \\  \\      /  /    |  |______   |  |  /      <br>   |  |        |  |    \\  \\    /  /     |   ______/  |   /  <br>    \\  \\______/  /      \\  \\__/  /      |  |         |  |   <br>     \\__________/        \\______/       |_________/  |__|      <br>".split(" ").join("&nbsp"));
 	
 	// Generate map & UI
-	game = generateMap(20, 150);
+	game = generateMap(20, 200);
 	initialise(gameData.view[0], gameData.view[1], gameData.stick);
 	var dto = false;
 	var bto = false;
