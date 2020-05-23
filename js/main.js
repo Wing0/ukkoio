@@ -111,17 +111,20 @@ function bindKeys() {
 		    break;
 
 		    case "over":
+			switch(e.which) {
+		        case 9: // TAB
+		        case 32: // SPACE
+		        case 13: // Enter
+			    $("#game").hide()
+			    $("#start").show()
+				$("#game-container").fadeIn(1000);
 
-
-		    $("#game").hide()
-		    $("#start").show()
-			$("#game-container").fadeIn(1000);
-
-			$("#game-wrapper").animate({
-				"background-color": "white"
-			}, {easing: "swing", duration: 1000});
-			gameData.mode = "menu"
-		    break;
+				$("#game-wrapper").animate({
+					"background-color": "white"
+				}, {easing: "swing", duration: 1000});
+				gameData.mode = "menu"
+			    break;
+			}
 		}
 	};
 }
@@ -137,7 +140,7 @@ function gameOver() {
 		"background-color": "black"
 	}, {easing: "linear", duration: 1000});
 	$("#game-over").append('<div id="end-score">Your score: ' + gameData.stick.score + " in " + gameData.gameMode + " mode</div>")
-	$("#game-over").append('<div id="return-to-menu">Press any key to return to main menu</div>')
+	$("#game-over").append('<div id="return-to-menu">Press &lt;TAB&gt; or &lt;SPACE&gt; to return to main menu</div>')
 }
 
 function generateMap(width, height) {
