@@ -6,7 +6,6 @@ To do:
 - Level indicator
 - Vertical worm bug
 - Appearance based on shovel etc. level
-- Level design optimised differently to casual and arcade mode (no items in arcade?)
 - Continuous fall/movement
 - Tips on how to play (extra bonus for hitting the head etc.)
 - Indicator how much damage was received
@@ -18,3 +17,4 @@ To do maybe:
 - Maneuverability upgrades: shovel up, climb, fall damage, rocket pack
 
 Done:
+- Level design optimised differently to casual and arcade mode (no items in arcade?)
