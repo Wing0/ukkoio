@@ -165,7 +165,6 @@ function generateMap(width, height) {
 	        ["worm-base", 90, 5, 150, 'linear'],
 	        ["worm-vertical-base", 120, 8, 180, 'linear'],
 			["gold-five", 120, 5, 150, 'uniform'],
-			["hard-ten", 100, 0, 200, 'filler'],
 			["empty", 90, 20, 150, 'uniform'],
 	        ["chest-2", 90, 0.4, 200, 'uniform'],
 			["empty", 150, 40, 200, 'linear'],
@@ -175,12 +174,16 @@ function generateMap(width, height) {
 
 
 	if (gameData.gameMode == "arcade") {
-		generationData.concat([
+		generationData = generationData.concat([
 			["solid", 150, 15, 200, 'linear'],
+			["hard-ten", 100, 0, 150, 'filler'],
+			["hard-five", 150, 0, 200, 'filler'],
+			["hard-five-gold-five", 150, 30, 200, 'uniform'],
 		]);
 	} else {
-		generationData.concat([
+		generationData = generationData.concat([
 			["solid", 150, 30, 200, 'linear'],
+			["hard-ten", 100, 0, 200, 'filler'],
 		]);
 	}
 	
@@ -1033,6 +1036,11 @@ function startGame(mode) {
 				m: 0,
 				h: 5
 			},
+			"hard-five-gold-five": {
+				s: 30,
+				m: 5,
+				h: 5
+			},
 			"gold-three": {
 				s: 15,
 				m: 3,
@@ -1078,6 +1086,11 @@ function startGame(mode) {
 	            m: 0,
 	            h: 3
 	        },
+	        "worm-head-used": {
+	            s: 50,
+	            m: 15,
+	            h: 3
+	        },
 	        "worm-base-hard": {
 	            s: 300,
 	            m: 60,
@@ -1102,10 +1115,11 @@ function startGame(mode) {
 	            h: 3,
 	            c: "red"
 	        },
-	        "worm-head-used": {
+	        "worm-head-used-hard": {
 	            s: 150,
 	            m: 30,
-	            h: 7
+	            h: 7,
+	            c: "red"
 	        },
 	        "worm-vertical-base": {
 	            s: 200,
