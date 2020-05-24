@@ -26,7 +26,6 @@ function bindKeys() {
 		switch (gameData.mode) {
 			case "game":
 			if (gameData.alive) {
-				console.log("Bound to game")
 				switch(e.which) {
 			        case 37: // left
 			        case 65: // left
@@ -655,10 +654,37 @@ function doDamage(dmg) {
 function updateUI() {
 	// This function updates the changes in the game data in the UI
 
+	// Level
+	switch (true) {
+
+		case (gameData.stick.y < 40):
+		gameData.level = 1;
+		break;
+
+		case (gameData.stick.y < 70):
+		gameData.level = 2;
+		break;
+
+		case (gameData.stick.y < 100):
+		gameData.level = 3;
+		break;
+
+		case (gameData.stick.y < 150):
+		gameData.level = 4;
+		break;
+
+	}
+
+	$("#level-display").html(gameData.level);
+
 	// Score & money
 	$("#score-display").html(gameData.stick.score);
 	$("#money-display").html(gameData.stick.money);
+
+	// Skills
 	$("#bomb .indicator").html(gameData.stick.bombs);
+
+	// DEBUG
 	$("#location-display").html("(" + gameData.stick.x + ", " + gameData.stick.y + ")");
 
 	// Level transition when not close to the edge
@@ -880,7 +906,6 @@ function chooseItem() {
 			break;
 			
 			case "controls":
-			console.log("game ghelpd")
 			$("#help").toggle()
 			break;
 		}
@@ -1125,7 +1150,7 @@ function startGame(mode) {
 		},
 		stick: {
 			x: 5,
-			y: 3,
+			y: 120,
 			jump: false,
 			shovel: 1,
 			score: 0,
@@ -1174,7 +1199,8 @@ function startGame(mode) {
 		moveTimerMax: 20,
 		moveTimerThreshold: 10,
 		mode: "game", // Which view is active
-		gameMode: mode // Which game mode is selected
+		gameMode: mode, // Which game mode is selected
+		level: 1
 	}
 
 	$("#game-over").html("     ___________    <br>   / ___________\\        <br>  /  /<br> |  |                    _____       ___       ___   __________<br> |  |     _________     /     \\     |   \\    /   |  |   ______/   <br> |  |    /______  |    /  /_\\  \\    |    \\__/    |  |  |_______   <br> \\  \\          / /    /  _____  \\   |  |\\____/|  |  |   ______/ <br>  \\  \\________/ /    /  /     \\  \\  |  |      |  |  |  |_______  <br>   \\ __________/    /  /       \\  \\ |  |      |  |  |_________/  <br>       _________    <br>     /  _______  \\   <br>    /  /       \\  \\    <br>   |  |        |  |   __          ___    __________   ___   ____ <br>   |  |        |  |  \\  \\        /  /   |   ______/  |  | /  __|  <br>   |  |        |  |   \\  \\      /  /    |  |______   |  |  /      <br>   |  |        |  |    \\  \\    /  /     |   ______/  |   /  <br>    \\  \\______/  /      \\  \\__/  /      |  |         |  |   <br>     \\__________/        \\______/       |_________/  |__|      <br>".split(" ").join("&nbsp"));
@@ -1202,13 +1228,14 @@ function startGame(mode) {
 		// Debug settings
 		if (DEBUG) {
 			gameData.stick.money = 5000;
-			gameData.stick.score = 305;
+			// gameData.stick.score = 305;
+			$("#location").show()
 			gameData.stick.bombs = 10;
 		}
 	})
 }
 
-var DEBUG = false;
+var DEBUG = true;
 var game = false;
 var gameData = {
 	mode: "menu",
