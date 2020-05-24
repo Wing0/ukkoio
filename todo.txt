@@ -2,8 +2,6 @@ To do:
 - More interesting things to do after gaps
 - Coin filler for the end
 - More solid tiles for the end
-- Depth indicator for dev mode
-- Level indicator
 - Vertical worm bug
 - Appearance based on shovel etc. level
 - Level design optimised differently to casual and arcade mode (no items in arcade?)
@@ -18,3 +16,5 @@ To do maybe:
 - Maneuverability upgrades: shovel up, climb, fall damage, rocket pack
 
 Done:
+- Depth indicator for dev mode
+- Level indicator
