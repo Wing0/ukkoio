@@ -1,16 +1,20 @@
 To do:
 - More interesting things to do after gaps
-- Coin base for the end
+- Coin filler for the end
 - More solid tiles for the end
 - Depth indicator for dev mode
 - Level indicator
 - Vertical worm bug
 - Appearance based on shovel etc. level
-- Maneuverability upgrades: shovel up, climb, fall damage, rocket pack
 - Level design optimised differently to casual and arcade mode (no items in arcade?)
 - Continuous fall/movement
-- Emojis when taking damage etc.
 - Tips on how to play (extra bonus for hitting the head etc.)
 - Indicator how much damage was received
+- Time resetter potions for arcade more
+
+To do maybe:
+- Click/touch interface
+- Emojis when taking damage etc.
+- Maneuverability upgrades: shovel up, climb, fall damage, rocket pack
 
 Done:
