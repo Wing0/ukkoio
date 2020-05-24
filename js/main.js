@@ -1184,7 +1184,7 @@ function startGame(mode) {
 		},
 		stick: {
 			x: 5,
-			y: 120,
+			y: 3,
 			jump: false,
 			shovel: 1,
 			score: 0,
@@ -1269,7 +1269,7 @@ function startGame(mode) {
 	})
 }
 
-var DEBUG = true;
+var DEBUG = false;
 var game = false;
 var gameData = {
 	mode: "menu",
