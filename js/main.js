@@ -147,30 +147,45 @@ function generateMap(width, height) {
 	// Generating the data for the entire map
 
 	console.log("Generating the map...")
+	var generationData = [
+			["empty", 0, 0, 4, 'filler'],
+			["basic", 4, 0, 40, 'filler'], // tile type, start, peak frequency, end, interpolation method
+			["gold-one", 0, 18, 40, 'sin'],
+			["hard-one", 40, 0, 80, 'filler'],
+			["hard-one-gold-three", 40, 10, 100, 'linear'],
+			["gold-three", 30, 10, 80, 'sin'],
+			["gold-five", 50, 3, 100, 'linear'],
+			["gold-five", 100, 3, 140, 'uniform'],
+			["empty", 70, 30, 100, 'sin'],
+			["hard-five", 80, 0, 100, 'filler'],
+			["hard-five", 100, 30, 120, 'linear-desc'],
+			["hard-ten", 50, 20, 100, 'linear'],
+	        ["chest", 5, 0.3, 100, 'uniform'],
+	        ["worm-base", 40, 0.8, 100, 'uniform'],
+	        ["worm-base", 90, 5, 150, 'linear'],
+	        ["worm-vertical-base", 120, 8, 180, 'linear'],
+			["gold-five", 120, 5, 150, 'uniform'],
+			["empty", 90, 20, 150, 'uniform'],
+	        ["chest-2", 90, 0.4, 200, 'uniform'],
+			["empty", 150, 40, 200, 'linear'],
+			["solid", 150, 15, 200, 'linear'],
+	        ["worm-base-hard", 140, 4, 200, 'uniform'],
+		]
 
-	generationData = [
-		["empty", 0, 0, 4, 'filler'],
-		["basic", 4, 0, 40, 'filler'], // tile type, start, peak frequency, end, interpolation method
-		["gold-one", 0, 18, 40, 'sin'],
-		["hard-one", 40, 0, 80, 'filler'],
-		["hard-one-gold-three", 40, 10, 100, 'linear'],
-		["gold-three", 30, 10, 80, 'sin'],
-		["gold-five", 50, 3, 100, 'linear'],
-		["empty", 70, 30, 100, 'sin'],
-		["hard-five", 80, 0, 100, 'filler'],
-		["hard-ten", 50, 20, 100, 'linear'],
-        ["chest", 5, 0.3, 100, 'uniform'],
-        ["worm-base", 40, 0.8, 100, 'uniform'],
-        ["worm-base", 90, 5, 150, 'linear'],
-        ["worm-vertical-base", 120, 8, 180, 'linear'],
-		["gold-five", 120, 5, 150, 'uniform'],
-		["hard-ten", 100, 0, 200, 'filler'],
-		["empty", 90, 20, 150, 'uniform'],
-        ["chest-2", 90, 0.4, 200, 'uniform'],
-		["empty", 150, 40, 200, 'linear'],
-		["solid", 150, 10, 200, 'linear'],
-        ["worm-base-hard", 140, 4, 200, 'uniform'],
-	]
+
+	if (gameData.gameMode == "arcade") {
+		generationData = generationData.concat([
+			["solid", 150, 15, 200, 'linear'],
+			["hard-ten", 100, 0, 150, 'filler'],
+			["hard-five", 150, 0, 200, 'filler'],
+			["hard-five-gold-five", 150, 30, 200, 'uniform'],
+		]);
+	} else {
+		generationData = generationData.concat([
+			["solid", 150, 30, 200, 'linear'],
+			["hard-ten", 100, 0, 200, 'filler'],
+		]);
+	}
 	
 	// Fill the map with empty tiles
 	var game = [];
@@ -201,6 +216,14 @@ function generateMap(width, height) {
 						
 						case 'linear':
 						p = (y - generationData[i][1])/(generationData[i][3] - generationData[i][1]) * generationData[i][2]/100
+						if (rnd < inc + p) {
+							game[x][y] = generationData[i][0];
+							found = true;
+						}
+						break;
+
+						case 'linear-desc':
+						p = (1 - (y - generationData[i][1])/(generationData[i][3] - generationData[i][1])) * generationData[i][2]/100
 						if (rnd < inc + p) {
 							game[x][y] = generationData[i][0];
 							found = true;
@@ -1013,6 +1036,11 @@ function startGame(mode) {
 				m: 0,
 				h: 5
 			},
+			"hard-five-gold-five": {
+				s: 30,
+				m: 5,
+				h: 5
+			},
 			"gold-three": {
 				s: 15,
 				m: 3,
@@ -1058,6 +1086,11 @@ function startGame(mode) {
 	            m: 0,
 	            h: 3
 	        },
+	        "worm-head-used": {
+	            s: 50,
+	            m: 15,
+	            h: 3
+	        },
 	        "worm-base-hard": {
 	            s: 300,
 	            m: 60,
@@ -1082,10 +1115,11 @@ function startGame(mode) {
 	            h: 3,
 	            c: "red"
 	        },
-	        "worm-head-used": {
+	        "worm-head-used-hard": {
 	            s: 150,
 	            m: 30,
-	            h: 7
+	            h: 7,
+	            c: "red"
 	        },
 	        "worm-vertical-base": {
 	            s: 200,
