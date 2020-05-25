@@ -741,7 +741,7 @@ function updateUI() {
 
 function increaseTimer() {
 	// Death timer
-	if (gameData.stick.score < 300 || gameData.gameMode == "casual") {
+	if (gameData.stick.score < 300 || gameData.gameMode == "casual" || gameData.mode == "shop") {
 		return;
 	}
 	var tick = 1000;
