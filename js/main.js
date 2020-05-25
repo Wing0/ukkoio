@@ -756,9 +756,7 @@ function increaseTimer() {
 	console.log("Timer:", gameData.moveTimer)
 
 
-	var color = 255;
 	if (gameData.moveTimer >= gameData.moveTimerThreshold) {
-		color = Math.round(255 - (gameData.moveTimer - gameData.moveTimerThreshold + 1) / (gameData.moveTimerMax - gameData.moveTimerThreshold) * 255);
 		if (gameData.moveTimer - gameData.moveTimerThreshold < 1) {
 			say("Hurry down!")	
 			$("#move-down").fadeIn()
@@ -769,7 +767,6 @@ function increaseTimer() {
 		}
 		$("#timer-display").html(gameData.moveTimerMax - gameData.moveTimer - 1)
 	}
-	
 }
 
 function resetTimer(keep) {
