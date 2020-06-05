@@ -854,10 +854,10 @@ function toggleShop(on) {
 
 function updateShop() {
 	// body...
-	$("#store-shovel>.price").html(Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]));
-	$("#store-shoes>.price").html(Math.round(gameData.upgrades.shoes[1]*1.5**gameData.upgrades.shoes[0]));
-	$("#store-sight>.price").html(gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0]);
-	$("#store-armor>.price").html(gameData.upgrades.armor[1][gameData.upgrades.armor[0] + 1][0]);
+	$("#store-shovel .price").html(Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]));
+	$("#store-shoes .price").html(Math.round(gameData.upgrades.shoes[1]*1.5**gameData.upgrades.shoes[0]));
+	$("#store-sight .price").html(gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0]);
+	$("#store-armor .price").html(gameData.upgrades.armor[1][gameData.upgrades.armor[0] + 1][0]);
 	updateUI();
 }
 
@@ -894,11 +894,11 @@ function chooseItem() {
 				gameData.upgrades.shovel[0] += 1;
 				gameData.stick.shovel *= 1.3;
 				gameData.stick.money -= cost;
-				$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");
+				$("#game-store .selector:eq("+gameData.shop+")").addClass("chosen");
 				updateShop();
 				setTimeout(function(){
-					$("#game-shop .chosen").removeClass("chosen");
-				}, 1500)
+					$("#game-store .chosen").removeClass("chosen");
+				}, 1000)
 			}
 			break;
 
@@ -921,9 +921,11 @@ function chooseItem() {
 				}
 
 				drawMap();
+				$("#game-store .selector:eq("+gameData.shop+")").addClass("chosen");
+				updateShop();
 				setTimeout(function(){
-					$("#game-shop .chosen").removeClass("chosen");
-				}, 1500)
+					$("#game-store .chosen").removeClass("chosen");
+				}, 1000)
 			}
 			break;
 
@@ -933,11 +935,11 @@ function chooseItem() {
 				gameData.upgrades.shoes[0] += 1;
 				gameData.stick.shoes *= 1.3;
 				gameData.stick.money -= cost;
-				$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");
+				$("#game-store .selector:eq("+gameData.shop+")").addClass("chosen");
 				updateShop();
 				setTimeout(function(){
-					$("#game-shop .chosen").removeClass("chosen");
-				}, 1500)
+					$("#game-store .chosen").removeClass("chosen");
+				}, 1000)
 			}
 			break;
 
@@ -948,11 +950,12 @@ function chooseItem() {
 				gameData.stick.money -= cost;
 				gameData.stick.armor += gameData.upgrades.armor[1][gameData.upgrades.armor[0]][1];
 				$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");
-				updateShop();
 				initialise(gameData.view[0], gameData.view[1], gameData.stick)
+				$("#game-store .selector:eq("+gameData.shop+")").addClass("chosen");
+				updateShop();
 				setTimeout(function(){
-					$("#game-shop .chosen").removeClass("chosen");
-				}, 1500)
+					$("#game-store .chosen").removeClass("chosen");
+				}, 1000)
 			}
 			break;
 		}
@@ -1312,7 +1315,7 @@ function startGame(mode) {
 }
 
 var VERSION = "0.1.2a";
-var DEBUG = false;
+var DEBUG = true;
 var game = false;
 var gameData = {
 	mode: "menu",

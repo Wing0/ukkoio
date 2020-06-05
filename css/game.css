@@ -72,14 +72,12 @@
 }
 
 #game .selector.selected {
-	color: blue;
 	font-weight: bold;
 }
 
 
 #game .selector.chosen {
-	color: green !important;
-	font-weight: bold;
+	text-shadow: 2px 2px lightgray;
 }
 
 #game .skill {
