@@ -856,8 +856,13 @@ function updateShop() {
 	// body...
 	$("#store-shovel .price").html(Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]));
 	$("#store-shoes .price").html(Math.round(gameData.upgrades.shoes[1]*1.5**gameData.upgrades.shoes[0]));
-	$("#store-sight .price").html(gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0]);
-	$("#store-armor .price").html(gameData.upgrades.armor[1][gameData.upgrades.armor[0] + 1][0]);
+	if (gameData.upgrades.sight[1].length - 1 == gameData.upgrades.sight[0]) {
+		$("#store-sight .price").html("XXX")
+	} else {
+		$("#store-sight .price").html(gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0]);
+	}
+	
+	$("#store-armor .price").html(Math.round(gameData.upgrades.armor[1]*1.5**gameData.upgrades.armor[0]));
 	updateUI();
 }
 
@@ -903,29 +908,31 @@ function chooseItem() {
 			break;
 
 			case 1:
-			var cost = gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0];
-			if (gameData.stick.money >= cost) {
-				gameData.upgrades.sight[0] += 1;
-				gameData.stick.money -= cost;
-				gameData.view[0] += gameData.upgrades.sight[1][gameData.upgrades.sight[0]][1];
-				gameData.view[1] += gameData.upgrades.sight[1][gameData.upgrades.sight[0]][2];
-				$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");
-				updateShop();
-				initialise(gameData.view[0], gameData.view[1], gameData.stick)
+			if (gameData.upgrades.sight[0] < gameData.upgrades.sight[1].length - 1) {
+				var cost = gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0];
+				if (gameData.stick.money >= cost) {
+					gameData.upgrades.sight[0] += 1;
+					gameData.stick.money -= cost;
+					gameData.view[0] += gameData.upgrades.sight[1][gameData.upgrades.sight[0]][1];
+					gameData.view[1] += gameData.upgrades.sight[1][gameData.upgrades.sight[0]][2];
+					$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");
+					updateShop();
+					initialise(gameData.view[0], gameData.view[1], gameData.stick)
 
-				// Fixing a bug where the right side of the field is treated differently
-				if (gameData.upgrades.sight[0] % 2 == 1) {
-					if (gameData.view[2] + gameData.view[0] >= game.length) {
-						gameData.view[2] -= 1
+					// Fixing a bug where the right side of the field is treated differently
+					if (gameData.upgrades.sight[0] % 2 == 1) {
+						if (gameData.view[2] + gameData.view[0] >= game.length) {
+							gameData.view[2] -= 1
+						}
 					}
-				}
 
-				drawMap();
-				$("#game-store .selector:eq("+gameData.shop+")").addClass("chosen");
-				updateShop();
-				setTimeout(function(){
-					$("#game-store .chosen").removeClass("chosen");
-				}, 1000)
+					drawMap();
+					$("#game-store .selector:eq("+gameData.shop+")").addClass("chosen");
+					updateShop();
+					setTimeout(function(){
+						$("#game-store .chosen").removeClass("chosen");
+					}, 1000)
+				}
 			}
 			break;
 
@@ -944,11 +951,15 @@ function chooseItem() {
 			break;
 
 			case 3:
-			var cost = gameData.upgrades.armor[1][gameData.upgrades.armor[0] + 1][0];
+			var cost = Math.round(gameData.upgrades.armor[1]*1.5**gameData.upgrades.armor[0]);
 			if (gameData.stick.money >= cost) {
 				gameData.upgrades.armor[0] += 1;
+				if (gameData.stick.armor == 0) {
+					gameData.stick.armor = gameData.upgrades.armor[2];
+				} else {
+					gameData.stick.armor *= 1.4;	
+				}
 				gameData.stick.money -= cost;
-				gameData.stick.armor += gameData.upgrades.armor[1][gameData.upgrades.armor[0]][1];
 				$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");
 				initialise(gameData.view[0], gameData.view[1], gameData.stick)
 				$("#game-store .selector:eq("+gameData.shop+")").addClass("chosen");
@@ -1247,17 +1258,7 @@ function startGame(mode) {
 		upgrades: {
 			shovel: [1, 5], // Current level, starting cost
 			shoes: [1, 8], // Current level, starting cost
-			armor: [
-				0, [ // Level
-					[0, 0],
-					[20, 5], // cost, armor
-					[40, 10],
-					[100, 20],
-					[200, 30],
-					[400, 40],
-					[1000, 60]
-				]
-			],
+			armor: [1, 20, 5], // Current level, starting cost, starting armor
 			sight: [
 				0, [ // Level
 					[0, 0, 0],
@@ -1315,7 +1316,7 @@ function startGame(mode) {
 }
 
 var VERSION = "0.1.2a";
-var DEBUG = true;
+var DEBUG = false;
 var game = false;
 var gameData = {
 	mode: "menu",
