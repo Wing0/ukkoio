@@ -1266,6 +1266,7 @@ function startGame(mode) {
 	})
 }
 
+var VERSION = "0.1.2a";
 var DEBUG = false;
 var game = false;
 var gameData = {

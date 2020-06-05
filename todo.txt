@@ -9,12 +9,16 @@ To do:
 - Indicator how much damage was received
 - Time resetter potions for arcade more
 - Fix the bug where shop items are sold out and the game crashes
+- Health flash
+- Cleaner UI
+- Personal high score
 
 
 To do maybe:
 - Click/touch interface
 - Emojis when taking damage etc.
 - Maneuverability upgrades: shovel up, climb, fall damage, rocket pack
+- Split screen multiplayer
 
 Done:
 - Level design optimised differently to casual and arcade mode (no items in arcade?)
