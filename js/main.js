@@ -115,6 +115,8 @@ function bindKeys() {
 		        case 32: // SPACE
 		        case 13: // Enter
 			    $("#game").hide()
+
+				$("#game-over").hide();
 			    $("#start").show()
 				$("#game-container").fadeIn(1000);
 
@@ -131,6 +133,7 @@ function bindKeys() {
 function gameOver() {
 	gameData.alive = false;
 	clearTimeout(deather)
+	clearTimeout(flashTimer)
 	resetTimer(true);
 	gameData.mode = "over";
 	$("#game-container").fadeOut();
@@ -287,8 +290,10 @@ function drawTile(v_x, v_y) {
 		// Set the right color
 		if (gameData.tiles[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].c) {
 			$('#' + v_x + "-" + v_y).css({"color": gameData.tiles[game[v_x + gameData.view[2]][v_y + gameData.view[3]]].c})
+			$('#' + v_x + "-" + v_y).attr("data-color", "special")
 		} else {
 			$('#' + v_x + "-" + v_y).css({"color": "black"})
+			$('#' + v_x + "-" + v_y).attr("data-color", "normal")
 		}
 		
 	}
@@ -663,15 +668,49 @@ function doDamage(dmg) {
 	gameData.stick.health -= effectiveDmg;
 	updateUI()
 	if (effectiveDmg > 0) {
-		say("(≧︿≦)");	
-	} else {
-		say("¯\_(ツ)_/¯");
+		flash(effectiveDmg / 100 * 1.5)	
 	}
 	
 	if (gameData.stick.health <= 0 && gameData.alive) {
 		resetTimer(true);
 		gameOver();
 	}
+}
+
+function flash(time) {
+
+	$("#game-wrapper").css({
+		"background-color": "black"
+	});
+
+
+	$('#game-field *[data-color="normal"]').css({
+		"color": "white"
+	});
+
+	$('#stick').css({
+		"color": "white"
+	});
+
+	flashTimer = setTimeout(function(){
+		var duration = 
+		resetColors(time / 3);
+
+	}, time * 1000);
+}
+
+function resetColors(duration) {
+	$("#game-wrapper").animate({
+		"background-color": "white"
+	}, {easing: "swing", duration: duration});
+
+	$('#game-field *[data-color="normal"]').animate({
+		"color": "black"
+	}, {easing: "swing", duration: duration});
+
+	$('#stick').animate({
+		"color": "black"
+	}, {easing: "swing", duration: duration});
 }
 
 function updateUI() {
@@ -1255,6 +1294,7 @@ function startGame(mode) {
 		// Bug fix for the case where the stick spawns inside a block
 		game[gameData.stick.x][gameData.stick.y] = "empty";
 		drawAbsoluteTile(gameData.stick.x, gameData.stick.y);
+		resetColors(0)
 
 		// Debug settings
 		if (DEBUG) {
@@ -1274,4 +1314,5 @@ var gameData = {
 	menu: 0
 };
 var deather = false;
+var flashTimer = false;
 bindKeys()
