@@ -1,5 +1,6 @@
 function initialise(width, height, stick) {
 	// Creating the viewport elements
+
 	$("#game-field").html("");
 	for (var y = -1; y < height + 1; y++) {
 		var row = $('<div class="row" id="' + y + '"></div>');
@@ -131,6 +132,8 @@ function bindKeys() {
 }
 
 function gameOver() {
+	// Enter into the game over mode
+
 	gameData.alive = false;
 	clearTimeout(deather)
 	clearTimeout(flashTimer)
@@ -283,6 +286,7 @@ function drawMap() {
 function drawTile(v_x, v_y) {
 	//  X and Y are in view port coordinates!
 	// Draw the tile on the map to update, or re-draw
+
 	if (v_x + gameData.view[2] < 0 || v_x + gameData.view[2] >= game.length || v_y + gameData.view[3] < 0 || v_y + gameData.view[3] >= game[0].length) {
 		$('#' + v_x + "-" + v_y).html(sprites["empty"].split(" ").join("&nbsp"))	
 	} else { 
@@ -302,6 +306,7 @@ function drawTile(v_x, v_y) {
 function drawAbsoluteTile(x, y) {
 	//  X and Y are in absolute coordinates!
 	// Draw the tile on the map to update, or re-draw
+
 	var v_x = x - gameData.view[2];
 	var v_y = y - gameData.view[3];
 	if (v_x >= -1 && v_x <= gameData.view[1] && v_y >= -1 && v_y <= gameData.view[2]){
@@ -311,6 +316,7 @@ function drawAbsoluteTile(x, y) {
 
 function drawStick(stick, pose) {
 	// Drawing the adventurer over the map in its own container
+
 	$("#stick").html(sprites[gameData.stick.pose].split(" ").join("&nbsp"));
 	var x = stick.x - gameData.view[2];
 	var y = stick.y - gameData.view[3];
@@ -322,6 +328,8 @@ function drawStick(stick, pose) {
 }
 
 function environmentCheckStick(stick) {
+	// Check any events and environment interactions around the figure
+
 	if (stick.y < game[stick.x].length - 1 && game[stick.x][stick.y + 1] == "empty") {
 		
 		// Stick falling animation
@@ -663,7 +671,8 @@ function selectMove(x, y, stick) {
 
 
 function doDamage(dmg) {
-	// Reduces the stick health
+	// Reduces the stick health. Armor is removed from damage done
+
 	var effectiveDmg = Math.max(0, dmg - gameData.stick.armor);
 	gameData.stick.health -= effectiveDmg;
 	updateUI()
@@ -678,6 +687,7 @@ function doDamage(dmg) {
 }
 
 function flash(time) {
+	// Flashes the screen into black for given time (in seconds)
 
 	$("#game-wrapper").css({
 		"background-color": "black"
@@ -700,6 +710,8 @@ function flash(time) {
 }
 
 function resetColors(duration) {
+	// Resets the screen into original colors, with an optional fade-in duration
+
 	$("#game-wrapper").animate({
 		"background-color": "white"
 	}, {easing: "swing", duration: duration});
@@ -784,7 +796,8 @@ function updateUI() {
 }
 
 function increaseTimer() {
-	// Death timer
+	// Death timer for arcade mode
+
 	if (gameData.stick.score < 300 || gameData.gameMode == "casual" || gameData.mode == "shop") {
 		return;
 	}
@@ -814,7 +827,8 @@ function increaseTimer() {
 }
 
 function resetTimer(keep) {
-	// body...
+	// This reduces the time in the death timer. If keep = true, the timer is paused
+
 	if (! keep){
 		var multiplier = 0.3 + 0.8 * gameData.stick.score / (3000 + gameData.stick.score);
 		console.log("multiplier:", multiplier)
@@ -831,7 +845,8 @@ function resetTimer(keep) {
 }
 
 function toggleShop(on) {
-	// body...
+	// Enter into the shop mode
+
 	if (on) {
 		$("#stick-container").fadeOut(200);
 		resetTimer(true);
@@ -853,7 +868,8 @@ function toggleShop(on) {
 }
 
 function updateShop() {
-	// body...
+	// Update the shop prices
+
 	$("#store-shovel .price").html(Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]));
 	$("#store-shoes .price").html(Math.round(gameData.upgrades.shoes[1]*1.5**gameData.upgrades.shoes[0]));
 	if (gameData.upgrades.sight[1].length - 1 == gameData.upgrades.sight[0]) {
@@ -868,6 +884,7 @@ function updateShop() {
 
 function selectItem(direction) {
 	// Move the item selector
+
 	switch (gameData.mode) {
 		case "shop":
 		gameData.shop += direction;
@@ -889,6 +906,8 @@ function selectItem(direction) {
 
 
 function chooseItem() {
+	// Choose the selected item
+
 	switch (gameData.mode){
 
 		case "shop":
@@ -994,6 +1013,7 @@ function chooseItem() {
 
 function useSkill(btn) {
 	// Uses the selected skill based on the button pressed
+
 	if (btn == 81) {
 		var shift = -1;
 	} else {
@@ -1023,6 +1043,8 @@ function useSkill(btn) {
 }
 
 function dropCoordinates(x, y) {
+	// Give the coordinates of the nearest solid tile below
+
 	if (game[x][y + 1] == "empty") {
 		return dropCoordinates(x, y + 1);
 	}
@@ -1031,6 +1053,7 @@ function dropCoordinates(x, y) {
 
 function explosion(x, y, size) {
 	// Makes an explosion using x and y as origin
+
 	console.log("BOOM!")
 	say("BOOM!")
 	for (var i = - size; i <= size; i ++) {
@@ -1056,6 +1079,7 @@ function explosion(x, y, size) {
 
 function say(message, level) {
 	// The stick man will say the message as a feedback
+
 	$("#message").html(message);
 	var severity = 1
 	switch (level) {
@@ -1082,6 +1106,7 @@ function say(message, level) {
 
 function startGame(mode) {
 	// Start the game
+
 	gameData = {
 		// Data for the distribution of each tile
 		tiles: {
