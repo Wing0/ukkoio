@@ -119,7 +119,7 @@
 }
 
 #game-stick .health.off {
-	color: lightgray;
+	color: rgb(200,200,200);
 }
 
 #stick-container {

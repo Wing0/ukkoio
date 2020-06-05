@@ -768,6 +768,8 @@ function updateUI() {
 
 	// Update the health bar
 	var hearts = Math.floor(gameData.stick.health / 20)
+	var grade = 200 - (gameData.stick.health - hearts * 20) * 10
+	console.log(grade)
 	$("#health-container").html("")
 	for (var i = 0; i < hearts; i++) {
 		$("#health-container").append($('<span class="health on">♥</span>'));
@@ -776,6 +778,9 @@ function updateUI() {
 	for (var i = 0; i < Math.round(gameData.stick.maxHealth / 20) - hearts; i++) {
 		$("#health-container").append($('<span class="health off">♥</span>'));
 	}
+
+	$("#health-container span:eq(" + hearts + ")").css({
+		"color": "rgb(" + grade + ", " + grade + ", " + grade + ")"});
 }
 
 function increaseTimer() {
