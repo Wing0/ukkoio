@@ -8,9 +8,6 @@ To do:
 - Tips on how to play (extra bonus for hitting the head etc.)
 - Indicator how much damage was received
 - Time resetter potions for arcade more
-- Fix the bug where shop items are sold out and the game crashes
-- Health flash
-- Cleaner UI
 - Personal high score
 
 
@@ -24,3 +21,6 @@ Done:
 - Level design optimised differently to casual and arcade mode (no items in arcade?)
 - Depth indicator for dev mode
 - Level indicator
+- Health flash
+- Cleaner UI
+- Fix the bug where shop items are sold out and the game crashes
