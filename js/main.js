@@ -162,6 +162,8 @@ function generateMap(width, height) {
 			["gold-five", 50, 3, 100, 'linear'],
 			["gold-five", 100, 3, 140, 'uniform'],
 			["empty", 70, 30, 100, 'sin'],
+			["health-potion", 70, 1, 100, 'sin'],
+			["health-potion", 100, 0.3, 200, 'uniform'],
 			["hard-five", 80, 0, 100, 'filler'],
 			["hard-five", 100, 30, 120, 'linear-desc'],
 			["hard-ten", 50, 20, 100, 'linear'],
@@ -183,8 +185,8 @@ function generateMap(width, height) {
 			["solid", 150, 15, 200, 'linear'],
 			["hard-ten", 100, 0, 150, 'filler'],
 			["hard-five", 150, 0, 200, 'filler'],
-			["potion", 130, 1, 150, 'linear'],
-			["potion", 150, 1, 200, 'linear-desc'],
+			["time-potion", 130, 1, 150, 'linear'],
+			["time-potion", 150, 1, 200, 'linear-desc'],
 			["hard-five-gold-five", 150, 30, 200, 'uniform'],
 		]);
 	} else {
@@ -421,7 +423,7 @@ function environmentCheckStick(stick) {
 	}
 
 	// Falling
-	if (stick.y < game[stick.x].length - 1 && ["empty", "potion", "bomb"].includes(game[stick.x][stick.y + 1])) {
+	if (stick.y < game[stick.x].length - 1 && ["empty", "time-potion", "health-potion", "bomb"].includes(game[stick.x][stick.y + 1])) {
 		
 		// Stick falling animation
 		var fallDuration = 300;
@@ -443,9 +445,14 @@ function environmentCheckStick(stick) {
 			bto = false;
 			break;
 
-			case "potion":
+			case "time-potion":
 			gameData.moveTimer = 0;
-			say("Aaaaahh... Tasty!")
+			say("Aaaaahh... Energising!")
+			break;
+
+			case "health-potion":
+			gameData.stick.health = Math.min(gameData.stick.maxHealth, gameData.stick.health + 20);
+			say("Aaaaahh... Rejuvenating!")
 			break;
 		}
 
@@ -1317,7 +1324,12 @@ function startGame(mode) {
 	            m: 0,
 	            h: 0
 	        },
-	        "potion": {
+	        "time-potion": {
+	            s: 0,
+	            m: 0,
+	            h: 0
+	        },
+	        "health-potion": {
 	            s: 0,
 	            m: 0,
 	            h: 0

@@ -147,9 +147,13 @@ var sprites = {
 		"       <br>"+
 		"   *   <br>"+
 		"   O   ",
-	"potion":
+	"time-potion":
 		"   m   <br>"+
 		"  |*|  <br>"+
+		"  |_|  ",
+	"health-potion":
+		"   m   <br>"+
+		"  |♥|  <br>"+
 		"  |_|  ",
 };
 
