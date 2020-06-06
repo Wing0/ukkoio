@@ -1389,7 +1389,7 @@ function startGame(mode) {
 	})
 }
 
-var VERSION = "0.1.2a";
+var VERSION = "0.1.2b";
 var DEBUG = false;
 var game = false;
 var gameData = {
