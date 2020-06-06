@@ -714,7 +714,7 @@ function selectMove(x, y, stick) {
 function doDamage(dmg) {
 	// Reduces the stick health. Armor is removed from damage done
 
-	var effectiveDmg = Math.max(0, dmg - gameData.stick.armor);
+	var effectiveDmg = Math.round(Math.max(0, dmg - gameData.stick.armor));
 	gameData.stick.health -= effectiveDmg;
 	updateUI()
 	if (effectiveDmg > 0) {
