@@ -2,13 +2,13 @@ To do:
 - More interesting things to do after gaps
 - Coin filler for the end
 - More solid tiles for the end
-- Vertical worm bug
 - Appearance based on shovel etc. level
 - Continuous fall/movement
 - Tips on how to play (extra bonus for hitting the head etc.)
 - Indicator how much damage was received
 - Time resetter potions for arcade more
 - Personal high score
+- Better monster sprites depending on direction
 
 
 To do maybe:
@@ -24,3 +24,4 @@ Done:
 - Health flash
 - Cleaner UI
 - Fix the bug where shop items are sold out and the game crashes
+- Vertical worm bug

@@ -330,65 +330,6 @@ function drawStick(stick, pose) {
 function environmentCheckStick(stick) {
 	// Check any events and environment interactions around the figure
 
-	if (stick.y < game[stick.x].length - 1 && game[stick.x][stick.y + 1] == "empty") {
-		
-		// Stick falling animation
-		var fallDuration = 300;
-		var distance = parseInt($("#0-0").css("height"), 10)
-		var x_offset = Math.round(gameData.view[0]/2) - 1;
-		var y_offset = Math.round(gameData.view[1]/2) - 1;
-
-		gameData.stick.pose = "stick-fall";
-		gameData.stick.fallDistance += 1;
-		gameData.last_move = [0, 1];
-		drawStick(stick)
-		y = 1
-
-		// If the stick is close to the edge, move that instead of the level
-		if (stick.y < y_offset + 1 && y < 0 || stick.y < y_offset && y > 0 || stick.y > game[0].length - y_offset - 2 && y > 0 || stick.y > game[0].length - y_offset -1 && y < 0) {
-			if (y < 0) {
-				dto = true;
-				$("#stick-container").animate({
-					top: $("#stick-container").position().top - distance + "px",
-				}, fallDuration, function(){
-					gameData.stick.pose = "stick-basic";
-					moveStick(0, y, stick)
-					dto = false;
-					environmentCheckStick(stick)
-				})
-			} 
-			if (y > 0) {
-				dto = true;
-				$("#stick-container").animate({
-					top: $("#stick-container").position().top + distance + "px",
-				}, fallDuration, function(){
-					gameData.stick.pose = "stick-basic";
-					moveStick(0, y, stick)
-					dto = false;
-					environmentCheckStick(stick)
-				})
-			} 
-		} else {
-			// Level movement animation
-			dto = true;
-			$("#game-field").animate({
-				top: $("#game-field").position().top - distance + "px",
-			}, fallDuration, function(){
-				$("#game-field").css({top: distance + "px"});
-				gameData.stick.pose = "stick-basic";
-				moveStick(0, y, stick)
-				dto = false;
-				environmentCheckStick(stick)
-			})
-		}
-	} else {
-		if (gameData.stick.fallDistance > 1) {
-			var dmg = (gameData.stick.fallDistance - 1) ** 2 * 10;
-			doDamage(dmg);
-		}
-		gameData.stick.fallDistance = 0;
-	}
-
 	// Monster check
 
 	// Horizontal worm
@@ -477,6 +418,67 @@ function environmentCheckStick(stick) {
 			}
 		}
 	}
+
+	// Falling
+	if (stick.y < game[stick.x].length - 1 && game[stick.x][stick.y + 1] == "empty") {
+		
+		// Stick falling animation
+		var fallDuration = 300;
+		var distance = parseInt($("#0-0").css("height"), 10)
+		var x_offset = Math.round(gameData.view[0]/2) - 1;
+		var y_offset = Math.round(gameData.view[1]/2) - 1;
+
+		gameData.stick.pose = "stick-fall";
+		gameData.stick.fallDistance += 1;
+		gameData.last_move = [0, 1];
+		drawStick(stick)
+		y = 1
+
+		// If the stick is close to the edge, move that instead of the level
+		if (stick.y < y_offset + 1 && y < 0 || stick.y < y_offset && y > 0 || stick.y > game[0].length - y_offset - 2 && y > 0 || stick.y > game[0].length - y_offset -1 && y < 0) {
+			if (y < 0) {
+				dto = true;
+				$("#stick-container").animate({
+					top: $("#stick-container").position().top - distance + "px",
+				}, fallDuration, function(){
+					gameData.stick.pose = "stick-basic";
+					moveStick(0, y, stick)
+					dto = false;
+					environmentCheckStick(stick)
+				})
+			} 
+			if (y > 0) {
+				dto = true;
+				$("#stick-container").animate({
+					top: $("#stick-container").position().top + distance + "px",
+				}, fallDuration, function(){
+					gameData.stick.pose = "stick-basic";
+					moveStick(0, y, stick)
+					dto = false;
+					environmentCheckStick(stick)
+				})
+			} 
+		} else {
+			// Level movement animation
+			dto = true;
+			$("#game-field").animate({
+				top: $("#game-field").position().top - distance + "px",
+			}, fallDuration, function(){
+				$("#game-field").css({top: distance + "px"});
+				gameData.stick.pose = "stick-basic";
+				moveStick(0, y, stick)
+				dto = false;
+				environmentCheckStick(stick)
+			})
+		}
+	} else {
+		if (gameData.stick.fallDistance > 1) {
+			var dmg = (gameData.stick.fallDistance - 1) ** 2 * 10;
+			doDamage(dmg);
+		}
+		gameData.stick.fallDistance = 0;
+	}
+
 	drawMap();
 }
 
@@ -689,24 +691,27 @@ function doDamage(dmg) {
 function flash(time) {
 	// Flashes the screen into black for given time (in seconds)
 
-	$("#game-wrapper").css({
-		"background-color": "black"
-	});
+	setTimeout(function(){ // Some delay needed to let the world draw the danger
+		$("#game-wrapper").css({
+			"background-color": "black"
+		});
 
 
-	$('#game-field *[data-color="normal"]').css({
-		"color": "white"
-	});
+		$('#game-field *[data-color="normal"]').css({
+			"color": "white"
+		});
 
-	$('#stick').css({
-		"color": "white"
-	});
+		$('#stick').css({
+			"color": "white"
+		});
 
-	flashTimer = setTimeout(function(){
-		var duration = 
-		resetColors(time / 3);
+		flashTimer = setTimeout(function(){
+			var duration = 
+			resetColors(time / 3);
 
-	}, time * 1000);
+		}, time * 1000);
+	}, 10)
+	
 }
 
 function resetColors(duration) {
