@@ -183,6 +183,8 @@ function generateMap(width, height) {
 			["solid", 150, 15, 200, 'linear'],
 			["hard-ten", 100, 0, 150, 'filler'],
 			["hard-five", 150, 0, 200, 'filler'],
+			["potion", 130, 1, 150, 'linear'],
+			["potion", 150, 1, 200, 'linear-desc'],
 			["hard-five-gold-five", 150, 30, 200, 'uniform'],
 		]);
 	} else {
@@ -612,6 +614,11 @@ function dig(x, y, stick) {
 					bto = false;
 					break;
 
+					case "potion":
+					gameData.moveTimer = 0;
+					say("Aaaaahh... Tasty!")
+					break;
+
 				}
 				game[stick.x + x][stick.y + y] = "empty";
 				if (stick.money == 0 && gameData.tiles[tileType].m > 0) {
@@ -691,7 +698,7 @@ function doDamage(dmg) {
 function flash(time) {
 	// Flashes the screen into black for given time (in seconds)
 
-	setTimeout(function(){ // Some delay needed to let the world draw the danger
+	flashTimer = setTimeout(function(){ // Some delay needed to let the world draw the danger
 		$("#game-wrapper").css({
 			"background-color": "black"
 		});
@@ -917,7 +924,7 @@ function chooseItem() {
 
 		case "shop":
 		switch (gameData.shop) {
-			case 0:
+			case 0: // Shovel
 			var cost = Math.round(gameData.upgrades.shovel[1]*1.5**gameData.upgrades.shovel[0]);
 			if (gameData.stick.money >= cost) {
 				gameData.upgrades.shovel[0] += 1;
@@ -931,7 +938,7 @@ function chooseItem() {
 			}
 			break;
 
-			case 1:
+			case 1: // Sight
 			if (gameData.upgrades.sight[0] < gameData.upgrades.sight[1].length - 1) {
 				var cost = gameData.upgrades.sight[1][gameData.upgrades.sight[0] + 1][0];
 				if (gameData.stick.money >= cost) {
@@ -960,7 +967,7 @@ function chooseItem() {
 			}
 			break;
 
-			case 2:
+			case 2: // Shoes 
 			var cost = Math.round(gameData.upgrades.shoes[1]*1.5**gameData.upgrades.shoes[0]);
 			if (gameData.stick.money >= cost) {
 				gameData.upgrades.shoes[0] += 1;
@@ -974,14 +981,14 @@ function chooseItem() {
 			}
 			break;
 
-			case 3:
+			case 3: // Armor
 			var cost = Math.round(gameData.upgrades.armor[1]*1.5**gameData.upgrades.armor[0]);
 			if (gameData.stick.money >= cost) {
 				gameData.upgrades.armor[0] += 1;
 				if (gameData.stick.armor == 0) {
 					gameData.stick.armor = gameData.upgrades.armor[2];
 				} else {
-					gameData.stick.armor *= 1.4;	
+					gameData.stick.armor *= 1.5;	
 				}
 				gameData.stick.money -= cost;
 				$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");
@@ -1262,6 +1269,11 @@ function startGame(mode) {
 	            h: 0
 	        },
 	        "bomb": {
+	            s: 0,
+	            m: 0,
+	            h: 0
+	        },
+	        "potion": {
 	            s: 0,
 	            m: 0,
 	            h: 0
