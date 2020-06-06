@@ -144,8 +144,27 @@ function gameOver() {
 	$("#game-wrapper").animate({
 		"background-color": "black"
 	}, {easing: "linear", duration: 2000});
-	$("#game-over").append('<div id="end-score">Your score: ' + gameData.stick.score + " in " + gameData.gameMode + " mode</div>")
+	if (gameData.stick.score > loadScore(gameData.gameMode)) {
+		$("#game-over").append('<div class="score-text" id="end-score">New high score: ' + gameData.stick.score + " in " + gameData.gameMode + " mode</div>")
+		saveScore(gameData.stick.score, gameData.gameMode);
+	} else {
+		$("#game-over").append('<div class="score-text" id="end-score">Your score: ' + gameData.stick.score + " in " + gameData.gameMode + " mode</div>")
+		$("#game-over").append('<div class="score-text">High score: ' + loadScore(gameData.gameMode) + " in " + gameData.gameMode + " mode</div>")
+	}
 	$("#game-over").append('<div id="return-to-menu">Press &lt;SPACE&gt; to return to main menu</div>')
+}
+
+function saveScore(score, mode) {
+	// Saves the given score into the browser cookies
+	Cookies.set('personal-best-' + mode, score);
+}
+
+function loadScore(mode) {
+	var highScore = Cookies.get('personal-best-' + mode);
+	if (!highScore) {
+		return 0;
+	}
+	return highScore;
 }
 
 function generateMap(width, height) {

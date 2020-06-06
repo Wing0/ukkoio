@@ -6,6 +6,7 @@ To do:
 - Tips on how to play (extra bonus for hitting the head etc.)
 - Personal high score
 - Better monster sprites depending on direction
+- Bug: default selection arcade after casual match
 
 
 To do maybe:

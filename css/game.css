@@ -160,9 +160,12 @@
 }
 
 #end-score {
+	margin-top: 2em;
+}
+
+.score-text {
 	text-align: center;
 	font-size: 2em;
-	margin-top: 2em;	
 }
 
 #return-to-menu {
