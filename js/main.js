@@ -422,7 +422,7 @@ function environmentCheckStick(stick) {
 	}
 
 	// Falling
-	if (stick.y < game[stick.x].length - 1 && game[stick.x][stick.y + 1] == "empty") {
+	if (stick.y < game[stick.x].length - 1 && ["empty", "potion", "bomb"].includes(game[stick.x][stick.y + 1])) {
 		
 		// Stick falling animation
 		var fallDuration = 300;
@@ -435,6 +435,22 @@ function environmentCheckStick(stick) {
 		gameData.last_move = [0, 1];
 		drawStick(stick)
 		y = 1
+
+		switch (game[stick.x][stick.y + 1]) {
+
+			case "bomb":
+			stick.bombs += 1
+			clearTimeout(bto);
+			bto = false;
+			break;
+
+			case "potion":
+			gameData.moveTimer = 0;
+			say("Aaaaahh... Tasty!")
+			break;
+		}
+
+		game[stick.x][stick.y + 1] = "empty";
 
 		// If the stick is close to the edge, move that instead of the level
 		if (stick.y < y_offset + 1 && y < 0 || stick.y < y_offset && y > 0 || stick.y > game[0].length - y_offset - 2 && y > 0 || stick.y > game[0].length - y_offset -1 && y < 0) {
@@ -611,7 +627,9 @@ function dig(x, y, stick) {
 
 					case "bomb":
 					stick.bombs += 1
+					clearTimeout(bto);
 					bto = false;
+
 					break;
 
 					case "potion":
@@ -666,6 +684,21 @@ function selectMove(x, y, stick) {
 	
 	switch (game[stick.x + x][stick.y + y]) {
 		case "empty":
+		validMoveStick(x, y, stick);
+		break;
+
+		case "bomb":
+		stick.bombs += 1
+		clearTimeout(bto);
+		bto = false;
+		game[stick.x + x][stick.y + y] = "empty";
+		validMoveStick(x, y, stick);
+		break;
+
+		case "potion":
+		gameData.moveTimer = 0;
+		say("Aaaaahh... Tasty!")
+		game[stick.x + x][stick.y + y] = "empty";
 		validMoveStick(x, y, stick);
 		break;
 
