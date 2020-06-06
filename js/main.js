@@ -1080,9 +1080,16 @@ function useSkill(btn) {
 		game[x][y] = "bomb";
 		gameData.stick.bombs -= 1;
 		drawAbsoluteTile(x, y)
+		say(3)
 		bto = setTimeout(function(){
-			explosion(x, y, 2)
-		}, 3000);
+			say(2)
+			bto = setTimeout(function(){
+				say(1)
+				bto = setTimeout(function(){
+					explosion(x, y, 3)
+				}, 1000);
+			}, 1000);
+		}, 1000);
 	}
 }
 
@@ -1142,7 +1149,7 @@ function say(message, level) {
 	}
 	$("#message").fadeIn(200);
 	setTimeout(function() {
-		$("#message").fadeOut(1000);
+		$("#message").fadeOut(400);
 	}, message.length * 100 * severity)
 }
 
