@@ -1513,7 +1513,7 @@ function startGame(mode) {
 	})
 }
 
-var VERSION = "0.1.2b";
+var VERSION = "0.1.2";
 var DEBUG = false;
 var game = false;
 var gameData = {
