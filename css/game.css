@@ -146,6 +146,15 @@
 	display: inline-block;
 }
 
+#damage-indicator {
+	position: absolute;
+    bottom: 100%;
+    right: 0;
+    color: red;
+    font-weight: bold;
+    display: none;
+}
+
 #location {
 	display: none;
 }

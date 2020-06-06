@@ -8,15 +8,15 @@ function initialise(width, height, stick) {
 			var blockContainer = $('<div class="tile" id="' + x + "-" + y + '"></div>');
 			row.append(blockContainer);
 		}
-		$("#game-field").append(row);
-
-		$("#game-overlay").append($('<div id="stick-container" style="top:0; left:0;"></div>'));
-		$("#stick-container").append($('<div id="stick"></div>'));
-		$("#stick-container").append($('<div id="message-wrapper"><div id="message"><p></p></div></div>'));
-		$("#stick-container").append($('<div id="move-down" class="arrow" style="display: none; position: absolute; top:90%; right:40%; transform: rotate(90deg);">➔</div>'));
-		$("#stick-container").append($('<div id="move-timer"  style="display: none; color: white; background-color: black; border-radius: 30px; padding: 0 5px 0 5px; position: absolute; top:105%; right:65%;"><span id="timer-display" style="background-color: black;">3</span></div>'));
-
+		$("#game-field").append(row);		
 	}
+
+	$("#game-overlay").append($('<div id="stick-container" style="top:0; left:0;"></div>'));
+	$("#stick-container").append($('<div id="stick"></div>'));
+	$("#stick-container").append($('<div id="message-wrapper"><div id="message"><p></p></div></div>'));
+	$("#stick-container").append($('<div id="damage-indicator">-15</div>'));
+	$("#stick-container").append($('<div id="move-down" class="arrow" style="display: none; position: absolute; top:90%; right:40%; transform: rotate(90deg);">➔</div>'));
+	$("#stick-container").append($('<div id="move-timer"  style="display: none; color: white; background-color: black; border-radius: 30px; padding: 0 5px 0 5px; position: absolute; top:105%; right:65%;"><span id="timer-display" style="background-color: black;">3</span></div>'));
 }
 
 function bindKeys() {
@@ -718,7 +718,12 @@ function doDamage(dmg) {
 	gameData.stick.health -= effectiveDmg;
 	updateUI()
 	if (effectiveDmg > 0) {
-		flash(effectiveDmg / 100 * 1.5)	
+		flash(effectiveDmg / 100 * 1.5)
+		$("#damage-indicator").html(-effectiveDmg)
+		$("#damage-indicator").show()
+		setTimeout(function(){
+			$("#damage-indicator").hide()
+		}, Math.max(500, effectiveDmg / 100 * 1500));
 	}
 	
 	if (gameData.stick.health <= 0 && gameData.alive) {
