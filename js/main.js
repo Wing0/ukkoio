@@ -1032,7 +1032,7 @@ function chooseItem() {
 				if (gameData.stick.armor == 0) {
 					gameData.stick.armor = gameData.upgrades.armor[2];
 				} else {
-					gameData.stick.armor *= 1.5;	
+					gameData.stick.armor *= 1.6;	
 				}
 				gameData.stick.money -= cost;
 				$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");
