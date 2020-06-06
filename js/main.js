@@ -301,7 +301,6 @@ function drawTile(v_x, v_y) {
 			$('#' + v_x + "-" + v_y).css({"color": "black"})
 			$('#' + v_x + "-" + v_y).attr("data-color", "normal")
 		}
-		
 	}
 }
 
@@ -311,9 +310,9 @@ function drawAbsoluteTile(x, y) {
 
 	var v_x = x - gameData.view[2];
 	var v_y = y - gameData.view[3];
-	if (v_x >= -1 && v_x <= gameData.view[1] && v_y >= -1 && v_y <= gameData.view[2]){
-		drawTile(v_x, v_y)
-	}	
+	if (v_x >= -1 && v_x <= gameData.view[0] && v_y >= -1 && v_y <= gameData.view[1]){
+		drawTile(v_x, v_y);
+	}
 }
 
 function drawStick(stick, pose) {
@@ -1327,7 +1326,7 @@ function startGame(mode) {
 			bombs: 0,
 			fallDistance: 0
 		},
-		view: [5, 5, 3, 2],
+		view: [5, 5, 3, 2], // width, height, x offset, y offset
 		shop: 0, // selected index
 		menu: 0,
 		upgrades: {
