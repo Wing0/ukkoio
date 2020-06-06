@@ -315,10 +315,110 @@ function drawAbsoluteTile(x, y) {
 	}
 }
 
-function drawStick(stick, pose) {
+function drawStick(stick) {
 	// Drawing the adventurer over the map in its own container
 
-	$("#stick").html(sprites[gameData.stick.pose].split(" ").join("&nbsp"));
+	var preContent = sprites[gameData.stick.pose].split(" ").join("?").split("<br>").join("!");
+	var map = spriteMaps[gameData.stick.pose];
+	var postContent = "";
+	for (var i = 0; i < preContent.length; i++) {
+		switch (map[i]) {
+
+			case "b":
+			switch (true) {
+				
+				case gameData.upgrades.shoes[0] == 5:
+				postContent += '<span style="font-weight: bold;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.shoes[0] == 6:
+				postContent += '<span style="font-weight: bold; color: #2ECC71;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.shoes[0] == 7:
+				postContent += '<span style="font-weight: bold; color: #3498DB;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.shoes[0] == 8:
+				postContent += '<span style="font-weight: bold; color: #9B59B6;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.shoes[0] == 9:
+				postContent += '<span style="font-weight: bold; color: #E67E22;">' + preContent[i] + '</span>'
+				break;
+
+				default:
+				postContent += preContent[i]
+
+			}
+			break;
+
+			case "a":
+			switch (true) {
+				
+				case gameData.upgrades.armor[0] == 3:
+				postContent += '<span style="font-weight: bold;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.armor[0] == 4:
+				postContent += '<span style="font-weight: bold; color: #2ECC71;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.armor[0] == 5:
+				postContent += '<span style="font-weight: bold; color: #3498DB;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.armor[0] == 6:
+				postContent += '<span style="font-weight: bold; color: #9B59B6;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.armor[0] == 7:
+				postContent += '<span style="font-weight: bold; color: #E67E22;">' + preContent[i] + '</span>'
+				break;
+
+				default:
+				postContent += preContent[i]
+
+			}
+			break;
+
+			case "s":
+
+			switch (true) {
+				
+				case gameData.upgrades.shovel[0] == 6:
+				postContent += '<span style="font-weight: bold;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.shovel[0] == 7:
+				postContent += '<span style="font-weight: bold; color: #2ECC71;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.shovel[0] == 8:
+				postContent += '<span style="font-weight: bold; color: #3498DB;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.shovel[0] == 9:
+				postContent += '<span style="font-weight: bold; color: #9B59B6;">' + preContent[i] + '</span>'
+				break;
+				
+				case gameData.upgrades.shovel[0] == 10:
+				postContent += '<span style="font-weight: bold; color: #E67E22;">' + preContent[i] + '</span>'
+				break;
+
+				default:
+				postContent += preContent[i]
+
+			}
+			break;
+
+			default:
+			postContent += preContent[i]
+			break;
+		}
+	}
+
+	$("#stick").html(postContent.split("?").join("&nbsp").split("!").join("<br>"));
 	var x = stick.x - gameData.view[2];
 	var y = stick.y - gameData.view[3];
 	var pos = $('#' + x + "-" + y).position();

@@ -153,3 +153,37 @@ var sprites = {
 		"  |_|  ",
 };
 
+var spriteMaps = {
+	"stick-basic":
+		"   a   ."+
+		"  aaa  ."+
+		"  b b  ",
+	"stick-fall":
+		" aaaaa ."+
+		"   a   ."+
+		"  b b  ",
+	"stick-right":
+		"   aaaa."+
+		"  a aa ."+
+		"   b b ",
+	"stick-left":
+		"aaaa   ."+
+		" aa a  ."+
+		" b b   ",
+	"stick-dig-right":
+		"aaa    ."+
+		"asaasss."+
+		" b b   ",
+	"stick-dig-left":
+		"    aaa."+
+		"sssaasa."+
+		"   b b ",
+	"stick-dig-down":
+		"   aaa ."+
+		"  aaas ."+
+		" bb  s ",
+	"stick-dig-up":
+		"   a s ."+
+		"  aaas ."+
+		" b b s ",
+}
