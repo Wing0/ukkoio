@@ -8,8 +8,6 @@ To do:
 - Indicator how much damage was received
 - Personal high score
 - Better monster sprites depending on direction
-- Warning message has black background instead of yeallow
-- Centered messages independent of the width
 - Bomb timer text
 
 
@@ -30,3 +28,5 @@ Done:
 - Vertical worm bug
 - Absolute tile drawing bug at different sight widths
 - Time resetter potions for arcade more
+- Centered messages independent of the width
+- Warning message has black background instead of yellow

@@ -10,11 +10,11 @@ function initialise(width, height, stick) {
 		}
 		$("#game-field").append(row);
 
-		$("#game-overlay").append($('<dif id="stick-container" style="top:0; left:0;"></div>'));
-		$("#stick-container").append($('<dif id="stick"></div>'));
-		$("#stick-container").append($('<dif id="message" style="display: none; position: absolute; bottom:110%; left:-2.5em;"></div>'));
-		$("#stick-container").append($('<dif id="move-down" class="arrow" style="display: none; position: absolute; top:90%; right:40%; transform: rotate(90deg);">➔</div>'));
-		$("#stick-container").append($('<dif id="move-timer"  style="display: none; color: white; background-color: black; border-radius: 30px; padding: 0 5px 0 5px; position: absolute; top:105%; right:65%;"><span id="timer-display" style="background-color: black;">3</span></div>'));
+		$("#game-overlay").append($('<div id="stick-container" style="top:0; left:0;"></div>'));
+		$("#stick-container").append($('<div id="stick"></div>'));
+		$("#stick-container").append($('<div id="message-wrapper"><div id="message"><p></p></div></div>'));
+		$("#stick-container").append($('<div id="move-down" class="arrow" style="display: none; position: absolute; top:90%; right:40%; transform: rotate(90deg);">➔</div>'));
+		$("#stick-container").append($('<div id="move-timer"  style="display: none; color: white; background-color: black; border-radius: 30px; padding: 0 5px 0 5px; position: absolute; top:105%; right:65%;"><span id="timer-display" style="background-color: black;">3</span></div>'));
 
 	}
 }
@@ -1124,20 +1124,20 @@ function explosion(x, y, size) {
 function say(message, level) {
 	// The stick man will say the message as a feedback
 
-	$("#message").html(message);
+	$("#message p").html(message);
 	var severity = 1
 	switch (level) {
 
 		case "info":
-			$("#message").css({"background-color": "white"});
+			$("#message p").css({"background-color": "white", "color": "black"});
 			break;
 
 		case "warning":
-			$("#message").css({"background-color": "yellow"});
+			$("#message p").css({"background-color": "black", "color": "white"});
 			severity = 1.5
 			break;
 		default:
-			$("#message").css({"background-color": "white"});
+			$("#message p").css({"background-color": "white", "color": "black"});
 			break;
 	}
 	$("#message").fadeIn(200);

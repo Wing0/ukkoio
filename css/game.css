@@ -124,11 +124,26 @@
 	position: absolute;
 }
 
+#message-wrapper {
+	position: absolute;
+	left: 50%;
+	bottom: 100%;
+}
+
 #message {
+	position: absolute;
+	bottom: 0%;
+	left: -5em;
 	text-align: center;
 	width: 10em;
 	z-index: 2;
+	display: none;
+}
+
+#message p {
 	border-radius: 5px;
+	text-align: center;
+	display: inline-block;
 }
 
 #location {
