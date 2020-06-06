@@ -3,12 +3,9 @@ To do:
 - Coin filler for the end
 - More solid tiles for the end
 - Appearance based on shovel etc. level
-- Continuous fall/movement
 - Tips on how to play (extra bonus for hitting the head etc.)
-- Indicator how much damage was received
 - Personal high score
 - Better monster sprites depending on direction
-- Bomb timer text
 
 
 To do maybe:
@@ -30,3 +27,6 @@ Done:
 - Time resetter potions for arcade more
 - Centered messages independent of the width
 - Warning message has black background instead of yellow
+- Bomb timer text
+- Indicator how much damage was received
+- Continuous fall/movement

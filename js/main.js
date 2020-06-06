@@ -457,36 +457,36 @@ function environmentCheckStick(stick) {
 				dto = true;
 				$("#stick-container").animate({
 					top: $("#stick-container").position().top - distance + "px",
-				}, fallDuration, function(){
+				}, {easing: "linear", duration: fallDuration, complete: function() {
 					gameData.stick.pose = "stick-basic";
 					moveStick(0, y, stick)
 					dto = false;
 					environmentCheckStick(stick)
-				})
+				}})
 			} 
 			if (y > 0) {
 				dto = true;
 				$("#stick-container").animate({
 					top: $("#stick-container").position().top + distance + "px",
-				}, fallDuration, function(){
+				}, {easing: "linear", duration: fallDuration, complete: function(){
 					gameData.stick.pose = "stick-basic";
 					moveStick(0, y, stick)
 					dto = false;
 					environmentCheckStick(stick)
-				})
+				}})
 			} 
 		} else {
 			// Level movement animation
 			dto = true;
 			$("#game-field").animate({
 				top: $("#game-field").position().top - distance + "px",
-			}, fallDuration, function(){
+			}, {easing: "linear", duration: fallDuration, complete: function(){
 				$("#game-field").css({top: distance + "px"});
 				gameData.stick.pose = "stick-basic";
 				moveStick(0, y, stick)
 				dto = false;
 				environmentCheckStick(stick)
-			})
+			}})
 		}
 	} else {
 		if (gameData.stick.fallDistance > 1) {
