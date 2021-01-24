@@ -7,6 +7,16 @@ To do:
 - Personal high score
 - Better monster sprites depending on direction
 
+Diamond store to buy permanent upgrades
+- Max health
+- Fall immunity
+- Small, medium and large chest to appear at the top
+- Second chance
+- Critter bomb
+- Throwing shovel
+- Climb up
+
+
 
 To do maybe:
 - Click/touch interface
