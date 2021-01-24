@@ -801,9 +801,16 @@ function selectMove(x, y, stick) {
 		validMoveStick(x, y, stick);
 		break;
 
-		case "potion":
+		case "time-potion":
 		gameData.moveTimer = 0;
-		say("Aaaaahh... Tasty!")
+		say("Aaaaahh... Energising!")
+		game[stick.x + x][stick.y + y] = "empty";
+		validMoveStick(x, y, stick);
+		break;
+
+		case "health-potion":
+		gameData.stick.health = Math.min(gameData.stick.maxHealth, gameData.stick.health + 20);
+		say("Aaaaahh... Rejuvenating!")
 		game[stick.x + x][stick.y + y] = "empty";
 		validMoveStick(x, y, stick);
 		break;
@@ -1132,7 +1139,7 @@ function chooseItem() {
 				if (gameData.stick.armor == 0) {
 					gameData.stick.armor = gameData.upgrades.armor[2];
 				} else {
-					gameData.stick.armor *= 1.6;	
+					gameData.stick.armor *= 2;
 				}
 				gameData.stick.money -= cost;
 				$("#game-shop .selector:eq("+gameData.shop+")").addClass("chosen");

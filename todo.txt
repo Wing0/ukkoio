@@ -30,3 +30,4 @@ Done:
 - Bomb timer text
 - Indicator how much damage was received
 - Continuous fall/movement
+- Bug: potions are not collected
