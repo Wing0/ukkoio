@@ -266,6 +266,10 @@ function generateMap(width, height) {
 		}
 	}
 
+	// Place the diamond store
+	game[0][3] = 'vendor-bottom';
+	game[0][2] = 'vendor-top';
+
 	return game;
 }
 
@@ -609,7 +613,7 @@ function environmentCheckStick(stick) {
 function validMoveStick(x, y, stick) {
 	// Validate the movement before moving
 	if (stick.x <= game.length - 1 && stick.y <= game[stick.x].length - 1) {
-		if (game[stick.x + x][stick.y + y] == "empty") {
+		if (["empty", "vendor-bottom"].includes(game[stick.x + x][stick.y + y])) {
 			if (y < 0){
 				if (!stick.jump){
 					return;
@@ -629,10 +633,10 @@ function validMoveStick(x, y, stick) {
 
 			// Stick returns normal once movement complete
 			dto = setTimeout(function(){
-				gameData.last_move = [0, 0]
+				gameData.last_move = [0, 0];
 				gameData.stick.pose = "stick-basic";
-				moveStick(x, y, stick)
-				drawStick(stick)
+				moveStick(x, y, stick);
+				drawStick(stick);
 				updateUI()
 				environmentCheckStick(stick);
 			}, moveDuration);
@@ -792,6 +796,12 @@ function selectMove(x, y, stick) {
 		case "empty":
 		validMoveStick(x, y, stick);
 		break;
+
+		case "vendor-bottom":
+		validMoveStick(x, y, stick);
+		toggleShop(true);
+		break;
+
 
 		case "bomb":
 		stick.bombs += 1
@@ -1436,7 +1446,12 @@ function startGame(mode) {
 	            m: 0,
 	            h: 0
 	        },
-	        "health-potion": {
+	        "vendor-top": {
+	            s: 0,
+	            m: 0,
+	            h: 50
+	        },
+	        "vendor-bottom": {
 	            s: 0,
 	            m: 0,
 	            h: 0
