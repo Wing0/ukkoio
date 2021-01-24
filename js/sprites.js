@@ -155,6 +155,14 @@ var sprites = {
 		"   m   <br>"+
 		"  |♥|  <br>"+
 		"  |_|  ",
+	"vendor-top":
+		"   o   <br>"+
+		"  / \\  <br>"+
+		"/__^__\\",
+	"vendor-bottom":
+		"|  M  |<br>"+
+		"| |#| |<br>"+
+		"|_|#|_|",
 };
 
 var spriteMaps = {
